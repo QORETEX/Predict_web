@@ -1,36 +1,176 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Predict - Ghana's Free-to-Play Prediction Platform
+
+**Predict** is a free-to-play prediction platform designed for Ghana's next generation. Users can make predictions on NSMQ (National Science & Maths Quiz), football, basketball, tennis, and other sports, earning tokens (TKN) and XP to climb leaderboards and unlock rewards.
+
+> **Important**: Tokens (TKN) have **no cash value**. This is a completely free-to-play platform focused on community engagement and friendly competition.
+
+## Features
+
+### Core Functionality
+- **Live Events** - Real-time predictions with live multipliers
+- **Upcoming Events** - Plan picks ahead of time with higher multipliers
+- **Sport Categories** - NSMQ, Football, Basketball, Tennis, Other Sports
+- **My Picks** - Track predictions, view results, manage active and settled picks
+- **Wallet** - Token management, transaction history, and top-up packages
+
+### Community & Competition
+- **Leaderboards** - Compete across multiple categories (Overall, NSMQ, Football, etc.)
+- **Squads** - Create or join teams, complete challenges together
+- **School Rankings** - Represent your school in NSMQ competitions
+- **Badges & Achievements** - Earn rewards for milestones
+
+### Account & Rewards
+- **User Profiles** - Manage account, track stats, level progression
+- **Daily Rewards** - Log in daily to claim free tokens
+- **Referral Program** - Invite friends and earn bonus tokens
+- **XP System** - Level up by making predictions and winning
+
+## Tech Stack
+
+- **Framework**: Next.js 16.4.1 with App Router and Turbopack
+- **Authentication**: Clerk v7.9.16 (Google & Apple OAuth)
+- **Styling**: Tailwind CSS v4 with custom theme
+- **UI Components**: Radix UI primitives with CVA (Class Variance Authority)
+- **Language**: TypeScript
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18.x or higher
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/QORETEX/Predict_web.git
+cd predict-web
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Set up environment variables:
+Create a `.env.local` file in the root directory with the following:
+
+```bash
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+
+# Clerk URLs
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+predict-web/
+├── src/
+│   ├── app/
+│   │   ├── (landing)/          # Landing page
+│   │   ├── (auth)/             # Authentication pages (login, signup, etc.)
+│   │   ├── (app)/              # Protected app routes
+│   │   │   ├── dashboard/      # Main dashboard
+│   │   │   ├── live/           # Live events
+│   │   │   ├── upcoming/       # Upcoming events
+│   │   │   ├── nsmq/           # NSMQ predictions
+│   │   │   ├── football/       # Football predictions
+│   │   │   ├── basketball/     # Basketball predictions
+│   │   │   ├── tennis/         # Tennis predictions
+│   │   │   ├── other-sports/   # Other sports
+│   │   │   ├── picks/          # My Picks
+│   │   │   ├── wallet/         # Wallet & tokens
+│   │   │   ├── leaderboards/   # Leaderboards
+│   │   │   ├── squads/         # Squads & teams
+│   │   │   └── more/           # More features
+│   │   ├── globals.css         # Global styles
+│   │   └── layout.tsx          # Root layout
+│   ├── components/
+│   │   ├── ui/                 # Reusable UI components
+│   │   ├── dashboard/          # Dashboard-specific components
+│   │   └── landing/            # Landing page components
+│   ├── lib/
+│   │   └── utils.ts            # Utility functions
+│   └── middleware.ts           # Auth middleware
+├── public/
+│   ├── icons/                  # App icons
+│   ├── images/                 # Hero images
+│   ├── illustrations/          # Sport illustrations
+│   └── mockups/                # Design mockups
+└── package.json
+```
 
-## Learn More
+## Key Pages
 
-To learn more about Next.js, take a look at the following resources:
+### Public Pages
+- `/` - Landing page with hero, features, testimonials, FAQ
+- `/login` - Sign in with email/password or Google/Apple OAuth
+- `/signup` - Create new account
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Protected Pages
+- `/dashboard` - Main dashboard with welcome banner, featured competitions, events
+- `/live` - Live events with real-time multipliers
+- `/upcoming` - Scheduled events to plan picks ahead
+- `/nsmq`, `/football`, `/basketball`, `/tennis`, `/other-sports` - Sport-specific pages
+- `/picks` - Active and settled picks
+- `/wallet` - Token balance, transactions, packages
+- `/leaderboards` - Rankings across all categories
+- `/squads` - Team management and challenges
+- `/more` - Additional features and settings
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design Principles
 
-## Deploy on Vercel
+- **Token Economy**: Free-to-play with TKN tokens (no cash value)
+- **Age Restricted**: 15+ with Ghana Card verification
+- **Mobile-First**: Responsive design for all screen sizes
+- **Dark Theme**: Custom color palette with `#603BFF` primary color
+- **Minimal Borders**: Uses background contrast instead of heavy borders
+- **Solid Buttons**: No gradients on action buttons (`rounded-lg`, not `rounded-full`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Authentication Flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. User signs up via email/password or OAuth (Google/Apple)
+2. Email verification required for email/password signups
+3. After successful authentication, user is redirected to `/dashboard`
+4. Protected routes check authentication via Clerk middleware
+
+## Contributing
+
+This project is currently in development. Contributions, issues, and feature requests are welcome.
+
+## License
+
+[Add your license here]
+
+## Acknowledgments
+
+- Built for Ghana's next generation
+- NSMQ logo courtesy of Primetime Limited
+- Football crests from crests.football-data.org
+
+---
+
+**Remember**: Free to play. Tokens have no cash value. 15+ Age. Ghana Card verification. Community driven.
