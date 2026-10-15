@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "Home", icon: Home },
+  { href: "/dashboard", label: "Home", icon: Home },
   { href: "/leaderboards", label: "Ranks", icon: Trophy },
   { href: "/picks", label: "Picks", icon: Ticket },
   { href: "/wallet", label: "Wallet", icon: Wallet },
@@ -27,7 +27,7 @@ export function BottomNav() {
       <div className="mx-auto flex max-w-lg items-center justify-around">
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive =
-            href === "/" ? pathname === "/" : pathname.startsWith(href);
+            href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
           return (
             <Link

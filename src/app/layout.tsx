@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/providers/query-provider";
@@ -32,8 +33,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d0d0d" },
+    { media: "(prefers-color-scheme: light)", color: "#F5F7FC" },
+    { media: "(prefers-color-scheme: dark)", color: "#070D25" },
   ],
 };
 
@@ -49,7 +50,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-background font-sans antialiased">
-        <QueryProvider>{children}</QueryProvider>
+        <ClerkProvider
+          signInUrl="/login"
+          signUpUrl="/signup"
+          signInFallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/welcome"
+        >
+          <QueryProvider>{children}</QueryProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
