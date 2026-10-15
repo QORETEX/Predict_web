@@ -13,7 +13,9 @@
     "gen:api": "orval"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.9.16",
     "@hookform/resolvers": "^5.9.1",
+    "@radix-ui/react-slot": "^1.5.0",
     "@tanstack/react-query": "^5.104.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
