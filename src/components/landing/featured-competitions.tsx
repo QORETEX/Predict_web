@@ -48,11 +48,11 @@ const competitions = [
 
 export function FeaturedCompetitions() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-      <div className="mb-5 flex items-center justify-between">
+    <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+      <div className="mb-10 flex items-center justify-between">
         <h2 className="text-lg font-bold text-white">Featured Competitions</h2>
         <Link
-          href="/events"
+          href="/live"
           className="flex items-center gap-1 text-sm font-medium text-[#603BFF] hover:underline"
         >
           View all
@@ -72,6 +72,7 @@ export function FeaturedCompetitions() {
                   src={comp.image}
                   alt={comp.name}
                   fill
+                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                   className="object-cover object-right transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#101A3A] via-[#101A3A]/70 to-transparent" />
@@ -90,7 +91,7 @@ export function FeaturedCompetitions() {
                   LIVE
                 </span>
               ) : (
-                <span className="rounded-full bg-[#603BFF]/30 px-2.5 py-1 text-[11px] font-semibold text-[#C4B5FD] backdrop-blur-sm">
+                <span className="rounded-full bg-[#FBBF24]/20 px-2.5 py-1 text-[11px] font-semibold text-[#FBBF24] backdrop-blur-sm">
                   UPCOMING
                 </span>
               )}

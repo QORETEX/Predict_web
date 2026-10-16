@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePickSlip } from "@/contexts/pick-slip-context";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -331,6 +332,7 @@ function CompLogo({ src, name }: { src: string; name: string }) {
 /* ------------------------------------------------------------------ */
 
 export default function LivePage() {
+  const { openPickSlip } = usePickSlip();
   const [activeSport, setActiveSport] = useState<Sport>("all");
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set()

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ChevronDown,
   ChevronUp,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePickSlip } from "@/contexts/pick-slip-context";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -29,6 +31,7 @@ type LeagueFilter =
 type MarketTab = "1x2" | "over-under" | "btts" | "double-chance" | "correct-score" | "next-goal";
 
 interface MatchRow {
+  id: string;
   date: string;
   time: string;
   homeTeam: string;
@@ -95,6 +98,7 @@ const leagues: LeagueGroup[] = [
     matchCount: 8,
     matches: [
       {
+        id: "football-mancity-arsenal",
         date: "17 Oct 2026",
         time: "12:30 PM",
         homeTeam: "Man City",
@@ -108,6 +112,7 @@ const leagues: LeagueGroup[] = [
         estReturn: "124.5K",
       },
       {
+        id: "football-liverpool-chelsea",
         date: "17 Oct 2026",
         time: "03:00 PM",
         homeTeam: "Liverpool",
@@ -121,6 +126,7 @@ const leagues: LeagueGroup[] = [
         estReturn: "98.3K",
       },
       {
+        id: "football-manutd-tottenham",
         date: "18 Oct 2026",
         time: "04:30 PM",
         homeTeam: "Man Utd",
@@ -134,6 +140,7 @@ const leagues: LeagueGroup[] = [
         estReturn: "87.4K",
       },
       {
+        id: "football-astonvilla-newcastle",
         date: "19 Oct 2026",
         time: "08:00 PM",
         homeTeam: "Aston Villa",
@@ -159,6 +166,7 @@ const leagues: LeagueGroup[] = [
     matchCount: 6,
     matches: [
       {
+        id: "football-realmadrid-barcelona",
         date: "19 Oct 2026",
         time: "02:00 PM",
         homeTeam: "Real Madrid",
@@ -172,6 +180,7 @@ const leagues: LeagueGroup[] = [
         estReturn: "102.4K",
       },
       {
+        id: "football-atletico-villarreal",
         date: "18 Oct 2026",
         time: "04:15 PM",
         homeTeam: "Atletico Madrid",
@@ -185,6 +194,7 @@ const leagues: LeagueGroup[] = [
         estReturn: "88.7K",
       },
       {
+        id: "football-realsociedad-getafe",
         date: "19 Oct 2026",
         time: "06:30 PM",
         homeTeam: "Real Sociedad",
@@ -210,6 +220,7 @@ const leagues: LeagueGroup[] = [
     matchCount: 5,
     matches: [
       {
+        id: "football-juventus-inter",
         date: "17 Oct 2026",
         time: "02:45 PM",
         homeTeam: "Juventus",
@@ -223,6 +234,7 @@ const leagues: LeagueGroup[] = [
         estReturn: "95.2K",
       },
       {
+        id: "football-acmilan-napoli",
         date: "18 Oct 2026",
         time: "05:00 PM",
         homeTeam: "AC Milan",
@@ -248,6 +260,7 @@ const leagues: LeagueGroup[] = [
     matchCount: 5,
     matches: [
       {
+        id: "football-bayern-dortmund",
         date: "17 Oct 2026",
         time: "02:30 PM",
         homeTeam: "Bayern Munich",
@@ -261,6 +274,7 @@ const leagues: LeagueGroup[] = [
         estReturn: "118.9K",
       },
       {
+        id: "football-leverkusen-leipzig",
         date: "18 Oct 2026",
         time: "05:30 PM",
         homeTeam: "Leverkusen",
@@ -334,11 +348,13 @@ const TABLE_GRID =
 /* ------------------------------------------------------------------ */
 
 export default function FootballPage() {
+  const { openPickSlip } = usePickSlip();
   const [activeLeague, setActiveLeague] = useState<LeagueFilter>("all");
   const [activeMarket, setActiveMarket] = useState<MarketTab>("1x2");
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set()
   );
+  const [addedMatches, setAddedMatches] = useState<Set<string>>(new Set());
 
   function toggleGroup(id: string) {
     setCollapsedGroups((prev) => {
@@ -548,7 +564,7 @@ export default function FootballPage() {
                           </div>
 
                           {/* Match */}
-                          <div className="flex items-center gap-2">
+                          <Link href={`/events/${match.id}`} className="flex items-center gap-2 hover:underline">
                             <TeamAvatar
                               name={match.homeTeam}
                               color={match.homeColor}
@@ -561,7 +577,7 @@ export default function FootballPage() {
                                 vs {match.awayTeam}
                               </p>
                             </div>
-                          </div>
+                          </Link>
 
                           {/* 1X2 odds */}
                           <OddsCell value={match.odds1x2.home} />
@@ -595,14 +611,36 @@ export default function FootballPage() {
                               variant="outline"
                               size="sm"
                               className="h-7 px-2.5 text-[11px]"
+                              onClick={() => {
+                                // Navigate to event detail
+                                window.location.href = `/events/${match.id}`;
+                              }}
                             >
                               View Odds
                             </Button>
                             <Button
                               size="sm"
-                              className="h-7 px-2.5 text-[11px]"
+                              className={cn(
+                                "h-7 px-2.5 text-[11px]",
+                                addedMatches.has(match.id) && "bg-[#22C55E] hover:bg-[#22C55E]"
+                              )}
+                              onClick={() => {
+                                setAddedMatches((prev) => {
+                                  const next = new Set(prev);
+                                  next.add(match.id);
+                                  openPickSlip(); // Open right sidebar
+                                  setTimeout(() => {
+                                    setAddedMatches((p) => {
+                                      const n = new Set(p);
+                                      n.delete(match.id);
+                                      return n;
+                                    });
+                                  }, 2000);
+                                  return next;
+                                });
+                              }}
                             >
-                              Add
+                              {addedMatches.has(match.id) ? "Added ✓" : "Add"}
                             </Button>
                           </div>
                         </div>

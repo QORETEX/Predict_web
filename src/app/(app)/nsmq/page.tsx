@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePickSlip } from "@/contexts/pick-slip-context";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -208,6 +209,7 @@ function SchoolAvatar({ name, color }: { name: string; color: string }) {
 /* ------------------------------------------------------------------ */
 
 export default function NsmqPage() {
+  const { openPickSlip } = usePickSlip();
   const [activeTab, setActiveTab] = useState<PageTab>("fixtures");
   const [activeRound, setActiveRound] = useState<Round>("all");
   const [activeYear, setActiveYear] = useState("2027");

@@ -19,12 +19,12 @@ export function DownloadCta() {
     <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
       <div className="relative overflow-hidden rounded-2xl border border-[#23315A] bg-[#101A3A] p-8 sm:p-12">
         {/* Background decoration */}
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#603BFF]/5 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#603BFF]/5 blur-3xl" />
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#FBBF24]/5 blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#FBBF24]/5 blur-3xl" />
 
         <div className="relative z-10 mx-auto max-w-2xl text-center">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#603BFF]/10">
-            <Bell className="h-7 w-7 text-[#603BFF]" />
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FBBF24]/10">
+            <Bell className="h-7 w-7 text-[#FBBF24]" />
           </div>
 
           <h2 className="text-2xl font-bold text-white sm:text-3xl">

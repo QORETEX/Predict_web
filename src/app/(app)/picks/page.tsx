@@ -276,8 +276,8 @@ export default function PicksPage() {
         </div>
         <div className="relative px-6 py-7 sm:px-8">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#603BFF]/15">
-              <Ticket className="h-6 w-6 text-[#603BFF]" />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#FBBF24]/15">
+              <Ticket className="h-6 w-6 text-[#FBBF24]" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white sm:text-3xl">
@@ -382,8 +382,8 @@ export default function PicksPage() {
           subtitle="+176%"
         />
         <StatCard
-          icon={<Target className="h-4 w-4 text-[#603BFF]" />}
-          iconBg="bg-[#603BFF]/15"
+          icon={<Target className="h-4 w-4 text-[#FBBF24]" />}
+          iconBg="bg-[#FBBF24]/15"
           label="Win Rate"
           value="75%"
           subtitle="(3/4)"
@@ -615,10 +615,45 @@ export default function PicksPage() {
         </div>
       )}
 
-      {/* Pick History tab placeholder */}
+      {/* Pick History tab */}
       {activeTab === "history" && (
-        <div className="rounded-lg bg-[#0F1A36] px-6 py-12 text-center">
-          <p className="text-[#AAB5D0]">Pick history coming soon...</p>
+        <div>
+          <h2 className="mb-4 text-base font-semibold text-white">
+            All-Time Pick History
+          </h2>
+          <div className="space-y-4">
+            {/* Monthly breakdown */}
+            {[
+              { month: "October 2026", total: 24, won: 18, lost: 6, winRate: "75%" },
+              { month: "September 2026", total: 31, won: 22, lost: 9, winRate: "71%" },
+              { month: "August 2026", total: 28, won: 19, lost: 9, winRate: "68%" },
+            ].map((period, idx) => (
+              <div key={idx} className="rounded-lg bg-[#0F1A36] p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-white">{period.month}</h3>
+                  <span className="text-xs text-[#AAB5D0]">{period.total} picks</span>
+                </div>
+                <div className="mt-4 grid grid-cols-4 gap-4 text-center">
+                  <div>
+                    <p className="text-xs text-[#AAB5D0]/60">Total</p>
+                    <p className="text-lg font-bold text-white">{period.total}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#AAB5D0]/60">Won</p>
+                    <p className="text-lg font-bold text-[#22C55E]">{period.won}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#AAB5D0]/60">Lost</p>
+                    <p className="text-lg font-bold text-red-500">{period.lost}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#AAB5D0]/60">Win Rate</p>
+                    <p className="text-lg font-bold text-white">{period.winRate}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePickSlip } from "@/contexts/pick-slip-context";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -332,6 +333,7 @@ const TABLE_GRID =
 /* ------------------------------------------------------------------ */
 
 export default function TennisPage() {
+  const { openPickSlip } = usePickSlip();
   const [activeTour, setActiveTour] = useState<TourFilter>("all");
   const [activeMarket, setActiveMarket] = useState<MarketTab>("1x2");
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(

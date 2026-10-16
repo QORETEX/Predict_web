@@ -58,7 +58,7 @@ function RecentResults() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-white">Recent Results</h2>
         <Link
-          href="/results"
+          href="/picks"
           className="flex items-center gap-1 text-sm text-[#603BFF] hover:underline"
         >
           View all
@@ -108,10 +108,10 @@ interface QuickAction {
 
 const actions: QuickAction[] = [
   { label: "My Picks", icon: Ticket, href: "/picks" },
-  { label: "Refill Tokens", icon: Coins, href: "/tokens" },
+  { label: "Refill Tokens", icon: Coins, href: "/wallet" },
   { label: "Squad", icon: Users, href: "/squads" },
   { label: "View Leaderboard", icon: Medal, href: "/leaderboards" },
-  { label: "Redeem Rewards", icon: Gift, href: "/rewards" },
+  { label: "Redeem Rewards", icon: Gift, href: "/more" },
 ];
 
 function QuickActions() {
@@ -125,7 +125,7 @@ function QuickActions() {
             href={href}
             className="flex flex-col items-center justify-center gap-2 rounded-lg bg-[#0C1532] px-3 py-4 text-center transition-colors hover:bg-[#162042]"
           >
-            <Icon className="h-5 w-5 text-[#603BFF]" />
+            <Icon className="h-5 w-5 text-[#FBBF24]" />
             <span className="text-xs font-medium text-[#AAB5D0]">{label}</span>
           </Link>
         ))}

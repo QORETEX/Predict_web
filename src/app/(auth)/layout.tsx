@@ -39,7 +39,7 @@ export default function AuthLayout({
             Ghana&apos;s next generation.
           </p>
           <div className="mt-8 flex items-center gap-2 text-xs text-[#AAB5D0]/60">
-            <Zap className="h-3 w-3 text-[#603BFF]" />
+            <Zap className="h-3 w-3 text-[#FBBF24]" />
             Free to play &middot; Tokens have no cash value
           </div>
         </div>

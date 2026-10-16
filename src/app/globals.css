@@ -132,3 +132,28 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+.light .glass {
+  background: hsla(0, 0%, 100%, 0.7);
+}
+
+/* Light mode specific overrides */
+.light {
+  --color-dark-bg: 0 0% 100%;
+  --color-dark-bg-secondary: 225 33% 97%;
+  --color-dark-card: 0 0% 100%;
+  --color-dark-border: 222 20% 89%;
+  --color-text-primary: 224 55% 15%;
+  --color-text-secondary: 221 14% 47%;
+  --color-text-muted: 221 14% 47%;
+}
+
+:root {
+  --color-dark-bg: 228 65% 8%;
+  --color-dark-bg-secondary: 226 40% 10%;
+  --color-dark-card: 225 50% 14%;
+  --color-dark-border: 222 42% 24%;
+  --color-text-primary: 0 0% 100%;
+  --color-text-secondary: 224 22% 73%;
+  --color-text-muted: 224 22% 73%;
+}

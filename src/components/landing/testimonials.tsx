@@ -61,7 +61,7 @@ export function Testimonials() {
             key={stat.label}
             className="rounded-2xl border border-[#23315A] bg-[#101A3A] p-5 text-center"
           >
-            <div className="text-2xl font-extrabold text-[#603BFF]">
+            <div className="text-2xl font-extrabold text-[#FBBF24]">
               {stat.value}
             </div>
             <div className="mt-1 text-xs text-[#AAB5D0]">{stat.label}</div>

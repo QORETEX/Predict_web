@@ -18,8 +18,8 @@ export function WalletCard() {
       {/* Token balance */}
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#603BFF]/15">
-            <Coins className="h-5 w-5 text-[#603BFF]" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FBBF24]/15">
+            <Coins className="h-5 w-5 text-[#FBBF24]" />
           </div>
           <div>
             <p className="text-2xl font-bold text-white">1,250</p>

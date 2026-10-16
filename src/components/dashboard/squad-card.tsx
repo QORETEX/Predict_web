@@ -42,8 +42,8 @@ export function SquadCard() {
 
       {/* Join a squad CTA */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#603BFF]/15">
-          <Users className="h-5 w-5 text-[#603BFF]" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FBBF24]/15">
+          <Users className="h-5 w-5 text-[#FBBF24]" />
         </div>
 
         <div className="min-w-0 flex-1">

@@ -6,9 +6,9 @@ export default function WelcomePage() {
   return (
     <div className="text-center">
       {/* Icon */}
-      <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#603BFF]/15">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#603BFF]/25">
-          <Trophy className="h-7 w-7 text-[#603BFF]" />
+      <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#FBBF24]/15">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FBBF24]/25">
+          <Trophy className="h-7 w-7 text-[#FBBF24]" />
         </div>
       </div>
 
@@ -29,7 +29,7 @@ export default function WelcomePage() {
       {/* Quick stats */}
       <div className="mt-6 grid grid-cols-3 gap-3">
         <div className="rounded-lg border border-[#23315A] bg-[#0C1532] px-3 py-4">
-          <Trophy className="mx-auto mb-2 h-5 w-5 text-[#603BFF]" />
+          <Trophy className="mx-auto mb-2 h-5 w-5 text-[#FBBF24]" />
           <p className="text-lg font-bold text-white">0</p>
           <p className="text-[11px] text-[#AAB5D0]">Predictions</p>
         </div>
@@ -54,7 +54,7 @@ export default function WelcomePage() {
           </Link>
         </Button>
         <Button variant="outline" className="h-11 w-full border-[#23315A]" asChild>
-          <Link href="/events">
+          <Link href="/live">
             Explore Events
           </Link>
         </Button>

@@ -45,11 +45,10 @@ export default function LoginPage() {
     setError("");
     setOauthLoading(strategy);
     try {
-      await signIn.reset();
       await signIn.sso({
         strategy,
         redirectUrl: "/login/sso-callback",
-        redirectCallbackUrl: "/",
+        redirectCallbackUrl: "/dashboard",
       });
     } catch (err: unknown) {
       console.error("OAuth error:", err);

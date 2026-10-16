@@ -22,7 +22,7 @@ export function Hero() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 lg:px-8 lg:py-20">
         <div className="max-w-xl">
           <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-[#23315A] bg-[#101A3A]/80 px-4 py-1.5 text-sm text-[#AAB5D0]">
-            <Zap className="h-3.5 w-3.5 text-[#603BFF]" />
+            <Zap className="h-3.5 w-3.5 text-[#FBBF24]" />
             Free to play &middot; Tokens have no cash value
           </div>
 
@@ -55,17 +55,17 @@ export function Hero() {
 
           <div className="mt-10 flex flex-wrap items-center gap-8">
             <CategoryPill
-              icon={<Trophy className="h-4 w-4 text-[#603BFF]" />}
+              icon={<Trophy className="h-4 w-4 text-[#FBBF24]" />}
               label="NSMQ"
               sub="Regional &amp; National"
             />
             <CategoryPill
-              icon={<Goal className="h-4 w-4 text-[#603BFF]" />}
+              icon={<Goal className="h-4 w-4 text-[#FBBF24]" />}
               label="Football"
               sub="Premier League &amp; more"
             />
             <CategoryPill
-              icon={<Globe className="h-4 w-4 text-[#603BFF]" />}
+              icon={<Globe className="h-4 w-4 text-[#FBBF24]" />}
               label="Other Sports"
               sub="Trending events"
             />
