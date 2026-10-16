@@ -49,7 +49,7 @@ export function Faq() {
         </p>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-4">
         {faqs.map((faq, i) => {
           const isOpen = openIndex === i;
           return (

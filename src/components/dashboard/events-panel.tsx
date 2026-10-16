@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ChevronDown,
   ChevronRight,
@@ -27,6 +28,7 @@ type Sport = "all" | "nsmq" | "football" | "basketball" | "tennis" | "other";
 type MarketType = "1x2" | "over-under" | "double-chance" | "btts" | "next-goal" | "correct-score";
 
 interface EventRow {
+  id: string;
   time: string;
   isLive: boolean;
   homeTeam: string;
@@ -80,6 +82,7 @@ const mockGroups: CompetitionGroup[] = [
     logo: "https://static.wixstatic.com/media/a1e1f8_8706e696c8fc47bd82b930a71515301d~mv2.png/v1/fill/w_80,h_80,al_c,q_85,enc_avif,quality_auto/NSMQ%20Logo.png",
     events: [
       {
+        id: "nsmq-kumasi-prempeh",
         time: "08:00",
         isLive: true,
         homeTeam: "Kumasi Academy",
@@ -91,6 +94,7 @@ const mockGroups: CompetitionGroup[] = [
         estReturn: "222.1K",
       },
       {
+        id: "nsmq-aquinas-achimota",
         time: "10:30",
         isLive: true,
         homeTeam: "St. Thomas Aquinas",
@@ -112,6 +116,7 @@ const mockGroups: CompetitionGroup[] = [
     logo: "https://crests.football-data.org/PL.png",
     events: [
       {
+        id: "pl-mancity-arsenal",
         time: "15:00",
         isLive: false,
         homeTeam: "Man City",
@@ -123,6 +128,7 @@ const mockGroups: CompetitionGroup[] = [
         estReturn: "368.5K",
       },
       {
+        id: "pl-liverpool-chelsea",
         time: "17:30",
         isLive: false,
         homeTeam: "Liverpool",
@@ -144,6 +150,7 @@ const mockGroups: CompetitionGroup[] = [
     logo: "https://crests.football-data.org/CL.png",
     events: [
       {
+        id: "ucl-realmadrid-bayern",
         time: "20:00",
         isLive: false,
         homeTeam: "Real Madrid",
@@ -155,6 +162,7 @@ const mockGroups: CompetitionGroup[] = [
         estReturn: "637.0K",
       },
       {
+        id: "ucl-barcelona-inter",
         time: "22:00",
         isLive: false,
         homeTeam: "Barcelona",
@@ -444,7 +452,7 @@ export function EventsPanel() {
 
                               {event.isLive && <LiveBadge />}
 
-                              <div className="min-w-0">
+                              <Link href={`/events/${event.id}`} className="min-w-0 hover:underline">
                                 <p className="truncate text-sm font-medium text-white">
                                   {event.homeTeam} vs {event.awayTeam}
                                 </p>
@@ -453,7 +461,7 @@ export function EventsPanel() {
                                     {event.region}
                                   </p>
                                 )}
-                              </div>
+                              </Link>
                             </div>
 
                             {/* Odds cells */}
@@ -501,7 +509,23 @@ export function EventsPanel() {
 
                             {/* Pick button */}
                             <div className="flex items-center justify-center">
-                              <Button size="sm" className="h-7 px-4 text-xs">
+                              <Button
+                                size="sm"
+                                className="h-7 px-4 text-xs"
+                                onClick={() => {
+                                  // Visual feedback - you can enhance this
+                                  const btn = document.activeElement as HTMLButtonElement;
+                                  if (btn) {
+                                    const originalText = btn.textContent;
+                                    btn.textContent = "Added ✓";
+                                    btn.classList.add("bg-[#22C55E]", "hover:bg-[#22C55E]");
+                                    setTimeout(() => {
+                                      btn.textContent = originalText || "Pick";
+                                      btn.classList.remove("bg-[#22C55E]", "hover:bg-[#22C55E]");
+                                    }, 1500);
+                                  }
+                                }}
+                              >
                                 Pick
                               </Button>
                             </div>

@@ -16,6 +16,7 @@ import {
   Wallet,
   Medal,
   Users,
+  User,
   MoreHorizontal,
   X,
   ChevronsLeft,
@@ -39,6 +40,7 @@ const secondaryNavItems = [
   { href: "/wallet", label: "Wallet", icon: Wallet },
   { href: "/leaderboards", label: "Leaderboard", icon: Medal },
   { href: "/squads", label: "Squads", icon: Users },
+  { href: "/profile", label: "Profile", icon: User },
   { href: "/more", label: "More", icon: MoreHorizontal },
 ];
 
@@ -65,8 +67,8 @@ function NavItem({
         "flex items-center rounded-lg text-sm font-medium transition-colors",
         collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-3 py-2.5",
         isActive
-          ? "bg-[#603BFF] text-white"
-          : "text-[#AAB5D0] hover:bg-white/5 hover:text-white"
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-accent/10 hover:text-foreground"
       )}
     >
       <Icon className="h-5 w-5 shrink-0" />
@@ -115,7 +117,7 @@ export function Sidebar({
       {/* Mobile sidebar — always full width */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 flex h-dvh w-[240px] flex-col border-r border-[#23315A] bg-[#0A1128] transition-transform duration-300 lg:hidden",
+          "fixed left-0 top-0 z-50 flex h-dvh w-[240px] flex-col border-r bg-card transition-transform duration-300 lg:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -129,14 +131,14 @@ export function Sidebar({
               className="rounded-lg"
             />
             <div>
-              <h1 className="text-lg font-bold leading-tight text-white">Predict</h1>
-              <p className="text-[11px] text-[#AAB5D0]">Pick. Play. Climb.</p>
+              <h1 className="text-lg font-bold leading-tight text-foreground">Predict</h1>
+              <p className="text-[11px] text-muted-foreground">Pick. Play. Climb.</p>
             </div>
           </Link>
           <button
             type="button"
             onClick={onMobileClose}
-            className="flex h-7 w-7 items-center justify-center rounded-md text-[#AAB5D0] hover:bg-white/5 hover:text-white"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/10 hover:text-foreground"
           >
             <X className="h-4 w-4" />
           </button>
@@ -146,7 +148,7 @@ export function Sidebar({
           {mainNavItems.map((item) => (
             <NavItem key={item.href} {...item} isActive={isActive(item.href)} collapsed={false} />
           ))}
-          <div className="my-3 border-t border-[#23315A]" />
+          <div className="my-3 border-t border-border" />
           {secondaryNavItems.map((item) => (
             <NavItem key={item.href} {...item} isActive={isActive(item.href)} collapsed={false} />
           ))}
@@ -157,7 +159,7 @@ export function Sidebar({
       {/* Desktop sidebar — expanded or icon rail */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 hidden h-dvh flex-col border-r border-[#23315A] bg-[#0A1128] transition-[width] duration-300 lg:flex",
+          "fixed left-0 top-0 z-40 hidden h-dvh flex-col border-r bg-card transition-[width] duration-300 lg:flex",
           open ? "w-[240px]" : "w-[68px]"
         )}
       >
@@ -182,7 +184,7 @@ export function Sidebar({
             <button
               type="button"
               onClick={onToggle}
-              className="flex h-7 w-7 items-center justify-center rounded-md text-[#AAB5D0] transition-colors hover:bg-white/5 hover:text-white"
+              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground"
             >
               <ChevronsLeft className="h-4 w-4" />
             </button>
@@ -197,7 +199,7 @@ export function Sidebar({
             </div>
           ))}
 
-          <div className="my-3 border-t border-[#23315A]" />
+          <div className="my-3 border-t border-border" />
 
           {secondaryNavItems.map((item) => (
             <NavItem key={item.href} {...item} isActive={isActive(item.href)} collapsed={!open} />
@@ -210,7 +212,7 @@ export function Sidebar({
             <button
               type="button"
               onClick={onToggle}
-              className="flex w-full items-center justify-center rounded-md py-2 text-[#AAB5D0] transition-colors hover:bg-white/5 hover:text-white"
+              className="flex w-full items-center justify-center rounded-md py-2 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground"
             >
               <ChevronsRight className="h-4 w-4" />
             </button>

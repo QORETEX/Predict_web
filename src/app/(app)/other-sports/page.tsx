@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePickSlip } from "@/contexts/pick-slip-context";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -289,6 +290,7 @@ function OddsCell({ value }: { value: number | string }) {
 /* ------------------------------------------------------------------ */
 
 export default function OtherSportsPage() {
+  const { openPickSlip } = usePickSlip();
   const [activeSport, setActiveSport] = useState<SportFilter>("all");
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set()

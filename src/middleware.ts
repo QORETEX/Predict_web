@@ -8,6 +8,12 @@ const isPublicRoute = createRouteMatcher([
   "/verify(.*)",
   "/forgot-password(.*)",
   "/sso-callback(.*)",
+  "/welcome",
+]);
+
+const isSSOCallback = createRouteMatcher([
+  "/login/sso-callback",
+  "/signup/sso-callback",
 ]);
 
 const isAuthRoute = createRouteMatcher([
@@ -17,13 +23,20 @@ const isAuthRoute = createRouteMatcher([
   "/forgot-password(.*)",
 ]);
 
+const isLandingRoute = createRouteMatcher(["/"]);
+
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
   const isPublic = isPublicRoute(req);
   const isAuth = isAuthRoute(req);
 
-  // If user is signed in and trying to access auth pages, redirect to dashboard
-  if (userId && isAuth) {
+  // Let SSO callbacks through so AuthenticateWithRedirectCallback can finalize the session
+  if (isSSOCallback(req)) {
+    return NextResponse.next();
+  }
+
+  // If user is signed in and on landing page or auth pages, redirect to dashboard
+  if (userId && (isAuth || isLandingRoute(req))) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
@@ -37,7 +50,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|json|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
 };

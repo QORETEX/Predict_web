@@ -95,7 +95,7 @@ export function EventsTable() {
         </div>
 
         <Link
-          href="/events"
+          href="/live"
           className="hidden items-center gap-1 text-sm font-medium text-[#603BFF] hover:underline sm:flex"
         >
           View all events

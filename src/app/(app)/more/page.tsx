@@ -55,29 +55,29 @@ const sections: Section[] = [
     id: "account",
     title: "Account & Profile",
     description: "Manage your account, verification and personal settings.",
-    icon: <User className="h-5 w-5 text-[#603BFF]" />,
-    iconBg: "bg-[#603BFF]/15",
+    icon: <User className="h-5 w-5 text-[#FBBF24]" />,
+    iconBg: "bg-[#FBBF24]/15",
     cards: [
       {
-        icon: <User className="h-5 w-5 text-[#603BFF]" />,
+        icon: <User className="h-5 w-5 text-[#FBBF24]" />,
         title: "Profile",
         description: "View and edit your personal information.",
         href: "/profile",
       },
       {
-        icon: <Shield className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Shield className="h-5 w-5 text-[#FBBF24]" />,
         title: "Verification",
         description: "Complete KYC and verify your account.",
         href: "/verification",
       },
       {
-        icon: <Settings className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Settings className="h-5 w-5 text-[#FBBF24]" />,
         title: "Settings",
         description: "Notifications, language, privacy and more.",
         href: "/settings",
       },
       {
-        icon: <HelpCircle className="h-5 w-5 text-[#603BFF]" />,
+        icon: <HelpCircle className="h-5 w-5 text-[#FBBF24]" />,
         title: "Help & Support",
         description: "Get help or contact our support team.",
         href: "/support",
@@ -88,29 +88,29 @@ const sections: Section[] = [
     id: "rewards",
     title: "Rewards & Incentives",
     description: "Earn more tokens, unlock benefits and track your achievements.",
-    icon: <Gift className="h-5 w-5 text-[#603BFF]" />,
-    iconBg: "bg-[#603BFF]/15",
+    icon: <Gift className="h-5 w-5 text-[#FBBF24]" />,
+    iconBg: "bg-[#FBBF24]/15",
     cards: [
       {
-        icon: <Gift className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Gift className="h-5 w-5 text-[#FBBF24]" />,
         title: "Daily Rewards",
         description: "Log in daily and claim free tokens.",
         href: "/rewards/daily",
       },
       {
-        icon: <Users className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Users className="h-5 w-5 text-[#FBBF24]" />,
         title: "Referral Program",
         description: "Invite friends and earn bonus tokens.",
         href: "/rewards/referral",
       },
       {
-        icon: <Tag className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Tag className="h-5 w-5 text-[#FBBF24]" />,
         title: "Promotions",
         description: "Check out ongoing offers and bonuses.",
         href: "/rewards/promotions",
       },
       {
-        icon: <Star className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Star className="h-5 w-5 text-[#FBBF24]" />,
         title: "XP Store",
         description: "Spend XP on exclusive rewards and perks.",
         href: "/rewards/xp-store",
@@ -121,29 +121,29 @@ const sections: Section[] = [
     id: "learning",
     title: "Game & Learning",
     description: "Sharpen your skills, test your knowledge and have fun.",
-    icon: <Brain className="h-5 w-5 text-[#603BFF]" />,
-    iconBg: "bg-[#603BFF]/15",
+    icon: <Brain className="h-5 w-5 text-[#FBBF24]" />,
+    iconBg: "bg-[#FBBF24]/15",
     cards: [
       {
-        icon: <Brain className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Brain className="h-5 w-5 text-[#FBBF24]" />,
         title: "NSMQ Quiz",
         description: "Test your knowledge and earn rewards.",
         href: "/quiz/nsmq",
       },
       {
-        icon: <BookOpen className="h-5 w-5 text-[#603BFF]" />,
+        icon: <BookOpen className="h-5 w-5 text-[#FBBF24]" />,
         title: "Predict Academy",
         description: "Learn strategies, tips and insights.",
         href: "/academy",
       },
       {
-        icon: <Trophy className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Trophy className="h-5 w-5 text-[#FBBF24]" />,
         title: "Challenges",
         description: "Complete daily and weekly challenges.",
         href: "/challenges",
       },
       {
-        icon: <Crown className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Crown className="h-5 w-5 text-[#FBBF24]" />,
         title: "Leaderboards",
         description: "See how you rank across all categories.",
         href: "/leaderboards",
@@ -154,29 +154,29 @@ const sections: Section[] = [
     id: "community",
     title: "Community & Social",
     description: "Connect, share and be part of the Predict community.",
-    icon: <Users className="h-5 w-5 text-[#603BFF]" />,
-    iconBg: "bg-[#603BFF]/15",
+    icon: <Users className="h-5 w-5 text-[#FBBF24]" />,
+    iconBg: "bg-[#FBBF24]/15",
     cards: [
       {
-        icon: <Megaphone className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Megaphone className="h-5 w-5 text-[#FBBF24]" />,
         title: "News & Updates",
         description: "Latest news, events and announcements.",
         href: "/news",
       },
       {
-        icon: <MessageCircle className="h-5 w-5 text-[#603BFF]" />,
+        icon: <MessageCircle className="h-5 w-5 text-[#FBBF24]" />,
         title: "Community",
         description: "Join discussions and share your picks.",
         href: "/community",
       },
       {
-        icon: <School className="h-5 w-5 text-[#603BFF]" />,
+        icon: <School className="h-5 w-5 text-[#FBBF24]" />,
         title: "School Groups",
         description: "Connect with your school community.",
         href: "/schools",
       },
       {
-        icon: <Mail className="h-5 w-5 text-[#603BFF]" />,
+        icon: <Mail className="h-5 w-5 text-[#FBBF24]" />,
         title: "Feedback",
         description: "Share your thoughts and suggestions.",
         href: "/feedback",
@@ -207,8 +207,8 @@ export default function MorePage() {
         </div>
         <div className="relative px-6 py-7 sm:px-8">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#603BFF]/15">
-              <MoreHorizontal className="h-6 w-6 text-[#603BFF]" />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#FBBF24]/15">
+              <MoreHorizontal className="h-6 w-6 text-[#FBBF24]" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white sm:text-3xl">

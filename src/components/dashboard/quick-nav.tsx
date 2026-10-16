@@ -45,7 +45,7 @@ const items: QuickNavItem[] = [
     title: "Leaderboards",
     subtitle: "See where you rank",
     icon: Medal,
-    iconBg: "bg-yellow-500",
+    iconBg: "bg-[#FBBF24]",
   },
   {
     href: "/picks",

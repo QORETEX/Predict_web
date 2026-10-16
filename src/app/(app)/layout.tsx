@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { Sidebar } from "@/components/dashboard/sidebar";
@@ -12,15 +13,33 @@ import { WalletCard } from "@/components/dashboard/wallet-card";
 import { LiveOdds } from "@/components/dashboard/live-odds";
 import { SquadCard } from "@/components/dashboard/squad-card";
 import { cn } from "@/lib/utils";
+import { PickSlipProvider, usePickSlip } from "@/contexts/pick-slip-context";
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const { isOpen: pickSlipOpen } = usePickSlip();
   const [leftOpen, setLeftOpen] = useState(true);
-  const [rightOpen, setRightOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  // Auto-open right sidebar when pick is made
+  useEffect(() => {
+    if (pickSlipOpen) {
+      setRightOpen(true);
+    }
+  }, [pickSlipOpen]);
+
+  // Pages where right sidebar should be shown
+  const showRightSidebar =
+    pathname === "/dashboard" ||
+    pathname === "/live" ||
+    pathname === "/upcoming" ||
+    pathname === "/nsmq" ||
+    pathname === "/football" ||
+    pathname === "/basketball" ||
+    pathname === "/tennis" ||
+    pathname === "/other-sports" ||
+    pathname?.startsWith("/events/");
 
   return (
     <div className="min-h-dvh overflow-x-hidden bg-[#070D25]">
@@ -48,13 +67,14 @@ export default function AppLayout({
             {children}
           </main>
 
-          {/* Right sidebar */}
-          <aside
-            className={cn(
-              "relative hidden shrink-0 border-l border-[#23315A] transition-all duration-300 lg:block",
-              rightOpen ? "w-[320px]" : "w-0 overflow-hidden border-l-0"
-            )}
-          >
+          {/* Right sidebar - only on certain pages */}
+          {showRightSidebar && (
+            <aside
+              className={cn(
+                "relative hidden shrink-0 border-l border-[#23315A] transition-all duration-300 lg:block",
+                rightOpen ? "w-[320px]" : "w-0 overflow-hidden border-l-0"
+              )}
+            >
             <div
               className={cn(
                 "h-full w-[320px] overflow-y-auto transition-opacity duration-200",
@@ -80,9 +100,10 @@ export default function AppLayout({
               </div>
             </div>
           </aside>
+          )}
 
           {/* Right expand tab */}
-          {!rightOpen && (
+          {showRightSidebar && !rightOpen && (
             <button
               type="button"
               onClick={() => setRightOpen(true)}
@@ -116,7 +137,7 @@ export default function AppLayout({
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <Zap className="h-4 w-4 text-[#603BFF]" />
+                <Zap className="h-4 w-4 text-[#FBBF24]" />
               </div>
               <div>
                 <p className="text-xs font-semibold text-white">Free to play</p>
@@ -126,7 +147,7 @@ export default function AppLayout({
 
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <span className="text-sm font-extrabold text-[#603BFF]">15+</span>
+                <span className="text-sm font-extrabold text-[#FBBF24]">15+</span>
               </div>
               <div>
                 <p className="text-xs font-semibold text-white">Age 15+</p>
@@ -136,7 +157,7 @@ export default function AppLayout({
 
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <Gamepad2 className="h-4 w-4 text-[#603BFF]" />
+                <Gamepad2 className="h-4 w-4 text-[#FBBF24]" />
               </div>
               <div>
                 <p className="text-xs font-semibold text-white">NSMQ + Football + More</p>
@@ -146,7 +167,7 @@ export default function AppLayout({
 
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <UsersRound className="h-4 w-4 text-[#603BFF]" />
+                <UsersRound className="h-4 w-4 text-[#FBBF24]" />
               </div>
               <div>
                 <p className="text-xs font-semibold text-white">Community Driven</p>
@@ -157,7 +178,7 @@ export default function AppLayout({
 
           {/* Tagline */}
           <p
-            className="shrink-0 bg-gradient-to-r from-[#F43F5E] to-[#9B5CFF] bg-clip-text text-base italic text-transparent"
+            className="shrink-0 bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] bg-clip-text text-base italic text-transparent"
             style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
           >
             Your picks.<br />Your journey.
@@ -172,5 +193,19 @@ export default function AppLayout({
         </Suspense>
       </div>
     </div>
+  );
+}
+
+export default function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <PickSlipProvider>
+      <Suspense fallback={<div className="min-h-dvh bg-[#070D25]" />}>
+        <LayoutContent>{children}</LayoutContent>
+      </Suspense>
+    </PickSlipProvider>
   );
 }

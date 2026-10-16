@@ -55,7 +55,7 @@ export function TopSchools() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-white">Top Schools</h2>
         <Link
-          href="/leaderboards/schools"
+          href="/leaderboards"
           className="flex items-center gap-1 text-sm text-[#603BFF] hover:underline"
         >
           View all

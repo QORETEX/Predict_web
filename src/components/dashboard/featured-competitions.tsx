@@ -24,21 +24,21 @@ const competitions: FeaturedCompetition[] = [
   {
     title: "Premier League",
     subtitle: "Top clubs. Bigger rivalries.",
-    href: "/football/premier-league",
+    href: "/football",
     image: "/illustrations/Premier League Manchester City Celebration-2.png",
     logo: "https://crests.football-data.org/PL.png",
   },
   {
     title: "UEFA Champions League",
     subtitle: "Europe's biggest stage.",
-    href: "/football/ucl",
+    href: "/football",
     image: "/illustrations/Manchester City Under Neon Lights-1.png",
     logo: "https://crests.football-data.org/CL.png",
   },
   {
     title: "Other Sports",
     subtitle: "Basketball, Tennis, Athletics & more.",
-    href: "/sports",
+    href: "/other-sports",
     image: "/illustrations/Manchester City Premier League Spotlight-3.png",
     logo: "",
   },
@@ -52,7 +52,7 @@ export function FeaturedCompetitions() {
           Featured Competitions
         </h2>
         <Link
-          href="/competitions"
+          href="/upcoming"
           className="flex items-center gap-1 text-sm text-[#603BFF] hover:underline"
         >
           View all
@@ -75,6 +75,7 @@ export function FeaturedCompetitions() {
               src={comp.image}
               alt={comp.title}
               fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
               className="object-cover transition-transform duration-500 group-hover:scale-110"
             />
 

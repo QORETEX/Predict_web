@@ -35,6 +35,7 @@ const STAKE_PRESETS = [10, 50, 200, 200] as const;
 export function PickSlip() {
   const [picks, setPicks] = useState<Pick[]>(INITIAL_PICKS);
   const [stake, setStake] = useState<number>(50);
+  const [pickPlaced, setPickPlaced] = useState(false);
 
   const totalOdds = picks.reduce((acc, p) => acc * p.odds, 1);
   const estReturn = Math.round(stake * totalOdds * 100) / 100;
@@ -45,6 +46,20 @@ export function PickSlip() {
 
   function clearAll() {
     setPicks([]);
+  }
+
+  function handlePlacePick() {
+    if (picks.length === 0) return;
+
+    // Show success state
+    setPickPlaced(true);
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setPickPlaced(false);
+      setPicks([]);
+      setStake(50);
+    }, 2000);
   }
 
   return (
@@ -140,13 +155,24 @@ export function PickSlip() {
         </span>
       </div>
 
+      {/* Success message */}
+      {pickPlaced && (
+        <div className="mt-3 rounded-md bg-[#22C55E]/15 px-3 py-2 text-center">
+          <p className="text-xs font-semibold text-[#22C55E]">
+            ✓ Pick placed successfully!
+          </p>
+        </div>
+      )}
+
       {/* Place pick button */}
       <Button
-        className="mt-4 w-full bg-[#22C55E] text-white hover:bg-[#16A34A]"
+        onClick={handlePlacePick}
+        disabled={picks.length === 0 || pickPlaced}
+        className="mt-4 w-full bg-[#22C55E] text-white hover:bg-[#16A34A] disabled:opacity-50"
         size="default"
       >
-        Place Pick
-        <ArrowRight className="h-4 w-4" />
+        {pickPlaced ? "Pick Placed! ✓" : "Place Pick"}
+        {!pickPlaced && <ArrowRight className="h-4 w-4" />}
       </Button>
 
       {/* Disclaimer */}
