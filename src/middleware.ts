@@ -20,8 +20,8 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("predict_access")?.value;
   const { pathname } = req.nextUrl;
 
-  // API routes are always public
-  if (pathname.startsWith("/api/")) {
+  // API routes and backend proxy are always public
+  if (pathname.startsWith("/api/") || pathname.startsWith("/backend/")) {
     return NextResponse.next();
   }
 
