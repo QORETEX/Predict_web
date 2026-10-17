@@ -17,7 +17,7 @@ export default function LandingPage() {
       <FeaturedCompetitions />
 
       <section className="mx-auto max-w-7xl px-4 py-16 lg:px-8">
-        <div className="grid gap-4 lg:grid-cols-[1fr_350px]">
+        <div className="grid gap-4 xl:grid-cols-[1fr_350px]">
           <EventsTable />
           <RewardsCta />
         </div>

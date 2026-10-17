@@ -1,10 +1,16 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+// Client-side: use /backend proxy to avoid CORS
+// Server-side (API routes, build): hit the backend directly
+const API_URL =
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_API_URL!
+    : "/backend";
 
 type RequestOptions = {
   method?: string;
   body?: unknown;
   headers?: Record<string, string>;
   signal?: AbortSignal;
+  skipAuth?: boolean;
 };
 
 class ApiError extends Error {
@@ -24,18 +30,54 @@ function getAuthHeaders(): Record<string, string> {
 }
 
 export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, headers = {}, signal } = options;
+  const { method = "GET", body, headers = {}, signal, skipAuth = false } = options;
 
-  const res = await fetch(`${API_URL}${path}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeaders(),
-      ...headers,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-    signal,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        ...(skipAuth ? {} : getAuthHeaders()),
+        ...headers,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+      signal,
+    });
+  } catch (err) {
+    // Network error or CORS block — re-throw as-is so callers can distinguish
+    throw err;
+  }
+
+  if (res.status === 401 && !skipAuth) {
+    const { refreshAccessToken } = await import("@/lib/auth");
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      const retryRes = await fetch(`${API_URL}${path}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${newToken}`,
+          ...headers,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        signal,
+      });
+
+      if (!retryRes.ok) {
+        const data = await retryRes.json().catch(() => null);
+        throw new ApiError(retryRes.status, data);
+      }
+      if (retryRes.status === 204) return undefined as T;
+      return retryRes.json();
+    }
+
+    if (typeof window !== "undefined") {
+      const { clearTokens } = await import("@/lib/auth");
+      clearTokens();
+      window.location.href = "/login";
+    }
+  }
 
   if (!res.ok) {
     const data = await res.json().catch(() => null);

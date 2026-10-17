@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { Coins, Flame, Trophy } from "lucide-react";
+import { useAuthStore } from "@/stores/auth-store";
+import { useMeSummary } from "@/hooks/use-me";
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -26,10 +28,20 @@ function StatCard({ icon, iconBg, value, label }: StatCardProps) {
   );
 }
 
+const XP_PER_LEVEL = 500;
+
 export function WelcomeBanner() {
+  const user = useAuthStore((s) => s.user);
+  const { data: summary } = useMeSummary();
+
+  const firstName = user?.full_name?.split(" ")[0] ?? "there";
+  const balance = summary?.balance ?? 0;
+  const level = summary?.level ?? 1;
+  const xp = summary?.xp ?? 0;
+  const xpProgress = Math.min((xp / XP_PER_LEVEL) * 100, 100);
+
   return (
     <div className="relative overflow-hidden rounded-lg bg-card">
-      {/* Background image — right half */}
       <div className="absolute right-0 top-0 h-full w-1/2">
         <Image
           src="/images/hero.jpg"
@@ -41,13 +53,11 @@ export function WelcomeBanner() {
         <div className="absolute inset-0 bg-gradient-to-r from-card via-card/80 to-transparent" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 p-6 lg:p-8">
         <div className="max-w-xl">
-          {/* Heading */}
           <h2 className="text-2xl font-bold text-foreground lg:text-3xl">
             Welcome back,{" "}
-            <span className="text-warning">Kwame!</span>{" "}
+            <span className="text-warning">{firstName}!</span>{" "}
             <span role="img" aria-label="wave">
               👋
             </span>
@@ -57,38 +67,36 @@ export function WelcomeBanner() {
             the leaderboard and make your school proud.
           </p>
 
-          {/* Stat cards */}
           <div className="mt-5 flex flex-wrap gap-3">
             <StatCard
               icon={<Coins className="h-4 w-4 text-yellow-400" />}
               iconBg="bg-yellow-400/15"
-              value="1,250"
+              value={balance.toLocaleString()}
               label="Tokens"
             />
             <StatCard
               icon={<Flame className="h-4 w-4 text-orange-400" />}
               iconBg="bg-orange-400/15"
-              value="12"
-              label="Day streak"
+              value={String(level)}
+              label="Level"
             />
             <StatCard
               icon={<Trophy className="h-4 w-4 text-yellow-400" />}
               iconBg="bg-yellow-400/15"
-              value="842"
-              label="Leaderboard Rank"
+              value={xp.toLocaleString()}
+              label="XP"
             />
           </div>
 
-          {/* XP progress bar */}
           <div className="mt-5 max-w-md">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-foreground">Level 3 XP</span>
-              <span className="text-muted-foreground">320 / 500 XP</span>
+              <span className="font-medium text-foreground">Level {level} XP</span>
+              <span className="text-muted-foreground">{xp} / {XP_PER_LEVEL} XP</span>
             </div>
             <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-warning transition-all"
-                style={{ width: `${(320 / 500) * 100}%` }}
+                style={{ width: `${xpProgress}%` }}
               />
             </div>
           </div>

@@ -105,7 +105,7 @@ export function RewardsCta() {
       </p>
 
       <div className="mt-5 flex flex-col gap-2.5">
-        <Link href="/login">
+        <Link href="/signup">
           <Button className="w-full">
             Create Account
             <ArrowRight className="ml-1 h-4 w-4" />

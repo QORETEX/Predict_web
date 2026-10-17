@@ -1,56 +1,45 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/login(.*)",
-  "/signup(.*)",
-  "/verify(.*)",
-  "/forgot-password(.*)",
-  "/sso-callback(.*)",
-  "/welcome",
-]);
+const PUBLIC_PATHS = new Set(["/", "/login", "/signup", "/verify", "/forgot-password", "/welcome"]);
 
-const isSSOCallback = createRouteMatcher([
-  "/login/sso-callback",
-  "/signup/sso-callback",
-]);
+function isPublic(pathname: string): boolean {
+  if (PUBLIC_PATHS.has(pathname)) return true;
+  for (const p of PUBLIC_PATHS) {
+    if (p !== "/" && pathname.startsWith(p + "/")) return true;
+  }
+  return false;
+}
 
-const isAuthRoute = createRouteMatcher([
-  "/login(.*)",
-  "/signup(.*)",
-  "/verify(.*)",
-  "/forgot-password(.*)",
-]);
+const AUTH_PATHS = ["/login", "/signup", "/verify", "/forgot-password"];
 
-const isLandingRoute = createRouteMatcher(["/"]);
+function isAuthRoute(pathname: string): boolean {
+  return AUTH_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+}
 
-export default clerkMiddleware(async (auth, req) => {
-  const { userId } = await auth();
-  const isPublic = isPublicRoute(req);
-  const isAuth = isAuthRoute(req);
+export function middleware(req: NextRequest) {
+  const token = req.cookies.get("predict_access")?.value;
+  const { pathname } = req.nextUrl;
 
-  // Let SSO callbacks through so AuthenticateWithRedirectCallback can finalize the session
-  if (isSSOCallback(req)) {
+  // API routes are always public
+  if (pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
-  // If user is signed in and on landing page or auth pages, redirect to dashboard
-  if (userId && (isAuth || isLandingRoute(req))) {
+  // Signed-in users on auth pages or landing → dashboard
+  if (token && (isAuthRoute(pathname) || pathname === "/")) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // If user is not signed in and trying to access protected pages, redirect to login
-  if (!userId && !isPublic) {
+  // Unauthenticated users on protected pages → login
+  if (!token && !isPublic(pathname)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|json|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
   ],
 };

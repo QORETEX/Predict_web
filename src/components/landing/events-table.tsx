@@ -67,8 +67,8 @@ export function EventsTable() {
   return (
     <div className="rounded-2xl border border-[#23315A] bg-[#101A3A]">
       {/* Tab header */}
-      <div className="flex items-center justify-between border-b border-[#23315A] px-5 py-3">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between gap-2 border-b border-[#23315A] px-3 py-3 sm:px-5">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -96,9 +96,9 @@ export function EventsTable() {
 
         <Link
           href="/live"
-          className="hidden items-center gap-1 text-sm font-medium text-[#603BFF] hover:underline sm:flex"
+          className="flex items-center gap-1 text-xs font-medium text-[#603BFF] hover:underline sm:text-sm"
         >
-          View all events
+          View all
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
@@ -118,62 +118,89 @@ export function EventsTable() {
         {events.map((event, i) => (
           <div
             key={i}
-            className="grid items-center gap-2 px-5 py-3 transition-colors hover:bg-[#0C1532] sm:grid-cols-[180px_1fr_90px_110px_100px_70px]"
+            className="px-3 py-3 transition-colors hover:bg-[#0C1532] sm:px-5"
           >
-            {/* Competition */}
-            <div className="flex items-center gap-3">
-              <div
-                className={cn(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
-                  event.iconColor,
-                )}
-              >
-                {event.icon}
+            {/* Desktop row */}
+            <div className="hidden items-center gap-2 sm:grid sm:grid-cols-[180px_1fr_90px_110px_100px_70px]">
+              <div className="flex items-center gap-3">
+                <div
+                  className={cn(
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
+                    event.iconColor,
+                  )}
+                >
+                  {event.icon}
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-white">{event.competition}</span>
+                  <p className="text-[11px] text-[#AAB5D0]">{event.competitionSub}</p>
+                </div>
               </div>
+              <span className="text-sm text-[#AAB5D0]">{event.teams}</span>
               <div>
-                <span className="text-sm font-medium text-white">
-                  {event.competition}
-                </span>
-                <p className="text-[11px] text-[#AAB5D0]">
-                  {event.competitionSub}
-                </p>
+                {event.statusStyle === "red" ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#F43F5E]/15 px-2 py-0.5 text-[11px] font-semibold text-[#F43F5E]">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#F43F5E]" />
+                    {event.status}
+                  </span>
+                ) : event.statusStyle === "green" ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#22C55E]/15 px-2 py-0.5 text-[11px] font-semibold text-[#22C55E]">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#22C55E]" />
+                    {event.status}
+                  </span>
+                ) : (
+                  <span className="text-xs text-[#AAB5D0]/60">&mdash;</span>
+                )}
+              </div>
+              <span className="text-sm text-[#AAB5D0]">{event.startsIn}</span>
+              <span className="text-sm font-semibold text-white">{event.pool}</span>
+              <Link href={`/events/${i + 1}`}>
+                <Button size="sm" className="h-7 px-4 text-xs">Pick</Button>
+              </Link>
+            </div>
+
+            {/* Mobile card */}
+            <div className="flex flex-col gap-2 sm:hidden">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={cn(
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
+                      event.iconColor,
+                    )}
+                  >
+                    {event.icon}
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-white">{event.competition}</span>
+                    <p className="text-[11px] text-[#AAB5D0]">{event.competitionSub}</p>
+                  </div>
+                </div>
+                <div>
+                  {event.statusStyle === "red" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#F43F5E]/15 px-2 py-0.5 text-[11px] font-semibold text-[#F43F5E]">
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#F43F5E]" />
+                      {event.status}
+                    </span>
+                  ) : event.statusStyle === "green" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#22C55E]/15 px-2 py-0.5 text-[11px] font-semibold text-[#22C55E]">
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#22C55E]" />
+                      {event.status}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+              <p className="text-sm text-[#AAB5D0]">{event.teams}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-[#AAB5D0]">{event.startsIn}</span>
+                  <span className="text-xs font-semibold text-white">{event.pool}</span>
+                </div>
+                <Link href={`/events/${i + 1}`}>
+                  <Button size="sm" className="h-7 px-4 text-xs">Pick</Button>
+                </Link>
               </div>
             </div>
-
-            {/* Teams */}
-            <span className="text-sm text-[#AAB5D0]">{event.teams}</span>
-
-            {/* Status */}
-            <div>
-              {event.statusStyle === "red" ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#F43F5E]/15 px-2 py-0.5 text-[11px] font-semibold text-[#F43F5E]">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#F43F5E]" />
-                  {event.status}
-                </span>
-              ) : event.statusStyle === "green" ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#22C55E]/15 px-2 py-0.5 text-[11px] font-semibold text-[#22C55E]">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#22C55E]" />
-                  {event.status}
-                </span>
-              ) : (
-                <span className="text-xs text-[#AAB5D0]/60">&mdash;</span>
-              )}
-            </div>
-
-            {/* Starts In */}
-            <span className="text-sm text-[#AAB5D0]">{event.startsIn}</span>
-
-            {/* Pool */}
-            <span className="text-sm font-semibold text-white">
-              {event.pool}
-            </span>
-
-            {/* Pick button */}
-            <Link href={`/events/${i + 1}`}>
-              <Button size="sm" className="h-7 px-4 text-xs">
-                Pick
-              </Button>
-            </Link>
           </div>
         ))}
       </div>
