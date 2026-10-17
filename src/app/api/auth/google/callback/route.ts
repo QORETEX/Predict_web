@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+const API_URL = process.env.API_URL!;
+const APP_URL = process.env.APP_URL!;
 const TOKEN_COOKIE = "predict_access";
 
 export async function GET(req: NextRequest) {

@@ -2,7 +2,7 @@
 // Server-side (API routes, build): hit the backend directly
 const API_URL =
   typeof window === "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL!
+    ? process.env.API_URL!
     : "/backend";
 
 type RequestOptions = {

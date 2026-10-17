@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+const API_URL = process.env.API_URL!;
+const APP_URL = process.env.APP_URL!;
 const TOKEN_COOKIE = "predict_access";
 
 export async function POST(req: NextRequest) {
