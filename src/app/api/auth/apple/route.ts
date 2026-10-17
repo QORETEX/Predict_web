@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 const APPLE_CLIENT_ID = process.env.APPLE_CLIENT_ID!;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
+const APP_URL = process.env.APP_URL!;
 
 export async function GET() {
   const redirectUri = `${APP_URL}/api/auth/apple/callback`;
