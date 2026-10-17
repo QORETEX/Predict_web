@@ -15,24 +15,12 @@ import {
   Edit,
   Crown,
   ArrowRight,
+  RefreshCw,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-/* ------------------------------------------------------------------ */
-/*  Types                                                              */
-/* ------------------------------------------------------------------ */
-
-interface Transaction {
-  id: string;
-  date: string;
-  time: string;
-  type: "top-up" | "winnings" | "bet-placed";
-  description: string;
-  detail: string;
-  amount: number;
-  balance: number;
-}
+import { useWallet, useTransactions, useClaimRefill } from "@/hooks/use-wallet";
 
 interface TokenPackage {
   tokens: number;
@@ -40,93 +28,6 @@ interface TokenPackage {
   price: number;
   isBestValue?: boolean;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Mock data                                                          */
-/* ------------------------------------------------------------------ */
-
-const transactions: Transaction[] = [
-  {
-    id: "1",
-    date: "17 Oct 2026",
-    time: "08:45 PM",
-    type: "top-up",
-    description: "Top Up",
-    detail: "Mobile Money (MTN)",
-    amount: 1000,
-    balance: 1250,
-  },
-  {
-    id: "2",
-    date: "16 Oct 2026",
-    time: "06:32 PM",
-    type: "winnings",
-    description: "Winnings",
-    detail: "Man City vs Arsenal (1X2)",
-    amount: 450,
-    balance: 250,
-  },
-  {
-    id: "3",
-    date: "15 Oct 2026",
-    time: "09:12 PM",
-    type: "bet-placed",
-    description: "Bet Placed",
-    detail: "Liverpool vs Chelsea (Over 2.5)",
-    amount: -200,
-    balance: -200,
-  },
-  {
-    id: "4",
-    date: "14 Oct 2026",
-    time: "07:48 PM",
-    type: "top-up",
-    description: "Top Up",
-    detail: "AirtelTigo",
-    amount: 500,
-    balance: 400,
-  },
-  {
-    id: "5",
-    date: "13 Oct 2026",
-    time: "05:21 PM",
-    type: "winnings",
-    description: "Winnings",
-    detail: "Real Madrid vs Barcelona (BTTS)",
-    amount: 320,
-    balance: -100,
-  },
-  {
-    id: "6",
-    date: "12 Oct 2026",
-    time: "10:55 AM",
-    type: "bet-placed",
-    description: "Bet Placed",
-    detail: "NBA - Lakers vs Warriors (1X2)",
-    amount: -150,
-    balance: -420,
-  },
-  {
-    id: "7",
-    date: "10 Oct 2026",
-    time: "04:17 PM",
-    type: "top-up",
-    description: "Top Up",
-    detail: "MTN Mobile Money",
-    amount: 1000,
-    balance: 570,
-  },
-  {
-    id: "8",
-    date: "08 Oct 2026",
-    time: "11:03 AM",
-    type: "winnings",
-    description: "Winnings",
-    detail: "Tennis - Alcaraz (Match Winner)",
-    amount: 600,
-    balance: -430,
-  },
-];
 
 const topUpAmounts = [
   { amount: 10, tokens: 100 },
@@ -149,7 +50,18 @@ const tokenPackages: TokenPackage[] = [
 /* ------------------------------------------------------------------ */
 
 export default function WalletPage() {
+  const { data: wallet } = useWallet();
+  const { data: txns } = useTransactions();
+  const refill = useClaimRefill();
   const [selectedTopUp, setSelectedTopUp] = useState(0);
+
+  const balance = wallet?.balance ?? 0;
+  const change7d = wallet?.change_7d ?? 0;
+  const totalPurchased = wallet?.total_purchased ?? 0;
+  const totalWon = wallet?.total_won ?? 0;
+  const totalStaked = wallet?.total_staked ?? 0;
+  const canRefill = wallet?.can_refill ?? false;
+  const transactions = txns ?? [];
 
   return (
     <div className="space-y-5">
@@ -195,9 +107,12 @@ export default function WalletPage() {
             </div>
             <div>
               <p className="text-xs text-[#AAB5D0]">Available Tokens</p>
-              <p className="text-3xl font-bold text-white">1,250</p>
-              <p className="flex items-center gap-1 text-xs font-medium text-[#22C55E]">
-                +250 this week
+              <p className="text-3xl font-bold text-white">{balance.toLocaleString()}</p>
+              <p className={cn(
+                "flex items-center gap-1 text-xs font-medium",
+                change7d >= 0 ? "text-[#22C55E]" : "text-red-500"
+              )}>
+                {change7d >= 0 ? "+" : ""}{change7d.toLocaleString()} this week
                 <TrendingUp className="h-3 w-3" />
               </p>
             </div>
@@ -211,7 +126,7 @@ export default function WalletPage() {
               </div>
               <div>
                 <p className="text-xs text-[#AAB5D0]">Total Deposited</p>
-                <p className="text-lg font-bold text-white">5,000</p>
+                <p className="text-lg font-bold text-white">{totalPurchased.toLocaleString()}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -220,7 +135,7 @@ export default function WalletPage() {
               </div>
               <div>
                 <p className="text-xs text-[#AAB5D0]">Total Winnings</p>
-                <p className="text-lg font-bold text-white">3,750</p>
+                <p className="text-lg font-bold text-white">{totalWon.toLocaleString()}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -228,8 +143,8 @@ export default function WalletPage() {
                 <CreditCard className="h-5 w-5 text-[#603BFF]" />
               </div>
               <div>
-                <p className="text-xs text-[#AAB5D0]">Total Spent</p>
-                <p className="text-lg font-bold text-white">4,500</p>
+                <p className="text-xs text-[#AAB5D0]">Total Staked</p>
+                <p className="text-lg font-bold text-white">{totalStaked.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -239,7 +154,18 @@ export default function WalletPage() {
       {/* ============================================================ */}
       {/*  Action buttons                                              */}
       {/* ============================================================ */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {canRefill && (
+          <Button
+            size="lg"
+            className="h-12 gap-2 bg-[#22C55E] hover:bg-[#22C55E]/90"
+            onClick={() => refill.mutate()}
+            disabled={refill.isPending}
+          >
+            {refill.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            Claim Refill
+          </Button>
+        )}
         <Button size="lg" className="h-12 gap-2">
           <ArrowUpCircle className="h-4 w-4" />
           Top Up
@@ -323,66 +249,61 @@ export default function WalletPage() {
 
           {/* Table rows */}
           <div className="divide-y divide-[#23315A]/20">
-            {transactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="grid items-center gap-2 px-5 py-3 transition-colors hover:bg-[#0C1532]/60 sm:grid-cols-[140px_80px_1fr_80px_80px]"
-              >
-                {/* Date & Time */}
-                <div className="text-xs text-[#AAB5D0]/70">
-                  <p className="text-white sm:text-[#AAB5D0]/70">{tx.date}</p>
-                  <p>{tx.time}</p>
-                </div>
-
-                {/* Type */}
-                <div className="flex items-center gap-2">
-                  <div
-                    className={cn(
-                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
-                      tx.type === "top-up" && "bg-[#22C55E]/15 text-[#22C55E]",
-                      tx.type === "winnings" &&
-                        "bg-[#603BFF]/15 text-[#603BFF]",
-                      tx.type === "bet-placed" && "bg-red-500/15 text-red-500"
-                    )}
-                  >
-                    {tx.type === "top-up" && (
-                      <ArrowUpCircle className="h-3.5 w-3.5" />
-                    )}
-                    {tx.type === "winnings" && (
-                      <Trophy className="h-3.5 w-3.5" />
-                    )}
-                    {tx.type === "bet-placed" && (
-                      <ArrowDownCircle className="h-3.5 w-3.5" />
-                    )}
-                  </div>
-                  <span className="text-xs text-white">{tx.description}</span>
-                </div>
-
-                {/* Description */}
-                <p className="text-sm text-[#AAB5D0]">{tx.detail}</p>
-
-                {/* Amount */}
-                <p
-                  className={cn(
-                    "text-right text-sm font-semibold",
-                    tx.amount > 0 ? "text-[#22C55E]" : "text-red-500"
-                  )}
-                >
-                  {tx.amount > 0 ? "+" : ""}
-                  {tx.amount.toLocaleString()}
-                </p>
-
-                {/* Balance */}
-                <p
-                  className={cn(
-                    "text-right text-sm",
-                    tx.balance < 0 ? "text-red-500" : "text-[#AAB5D0]"
-                  )}
-                >
-                  {tx.balance.toLocaleString()}
-                </p>
+            {transactions.length === 0 ? (
+              <div className="px-5 py-10 text-center text-sm text-[#AAB5D0]">
+                No transactions yet
               </div>
-            ))}
+            ) : (
+              transactions.map((tx) => {
+                const date = new Date(tx.created_at);
+                const isPositive = tx.amount > 0;
+                return (
+                  <div
+                    key={tx.id}
+                    className="grid items-center gap-2 px-5 py-3 transition-colors hover:bg-[#0C1532]/60 sm:grid-cols-[140px_80px_1fr_80px_80px]"
+                  >
+                    <div className="text-xs text-[#AAB5D0]/70">
+                      <p className="text-white sm:text-[#AAB5D0]/70">
+                        {date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                      </p>
+                      <p>{date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn(
+                          "flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
+                          isPositive ? "bg-[#22C55E]/15 text-[#22C55E]" : "bg-red-500/15 text-red-500"
+                        )}
+                      >
+                        {isPositive ? (
+                          <ArrowUpCircle className="h-3.5 w-3.5" />
+                        ) : (
+                          <ArrowDownCircle className="h-3.5 w-3.5" />
+                        )}
+                      </div>
+                      <span className="text-xs text-white">{tx.label}</span>
+                    </div>
+
+                    <p className="text-sm text-[#AAB5D0]">{tx.memo}</p>
+
+                    <p
+                      className={cn(
+                        "text-right text-sm font-semibold",
+                        isPositive ? "text-[#22C55E]" : "text-red-500"
+                      )}
+                    >
+                      {isPositive ? "+" : ""}
+                      {tx.amount.toLocaleString()}
+                    </p>
+
+                    <p className="text-right text-sm text-[#AAB5D0]">
+                      {tx.balance.toLocaleString()}
+                    </p>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 

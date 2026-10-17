@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[600px] overflow-hidden bg-[#070D25] pt-16">
-      <div className="absolute right-0 top-0 h-full w-[65%]">
+    <section className="relative min-h-[520px] overflow-hidden bg-[#070D25] pt-16 sm:min-h-[600px]">
+      <div className="absolute inset-0 sm:left-auto sm:w-[65%]">
         <Image
           src="/images/hero.jpg"
           alt=""
@@ -14,7 +14,7 @@ export function Hero() {
           className="object-cover object-[center_20%]"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#070D25] via-[#070D25]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070D25] via-[#070D25]/80 to-[#070D25]/40 sm:via-[#070D25]/70 sm:to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070D25] via-transparent to-transparent" />
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#070D25]/60 to-transparent" />
       </div>
@@ -31,16 +31,12 @@ export function Hero() {
             <span className="gradient-text">Climb.</span>
           </h1>
 
-          <p className="mt-4 max-w-md text-base leading-relaxed text-[#AAB5D0]">
-            Make predictions, compete with friends,
-            <br />
-            join squads and schools, and earn tokens and XP.
-            <br />
-            It&apos;s free, fun and built for Ghana&apos;s next generation.
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-[#AAB5D0] sm:text-base">
+            Make predictions, compete with friends, join squads and schools, and earn tokens and XP. It&apos;s free, fun and built for Ghana&apos;s next generation.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/login">
+            <Link href="/signup">
               <Button size="lg">
                 Get Started
                 <ArrowRight className="ml-1 h-4 w-4" />
@@ -57,12 +53,12 @@ export function Hero() {
             <CategoryPill
               icon={<Trophy className="h-4 w-4 text-[#FBBF24]" />}
               label="NSMQ"
-              sub="Regional &amp; National"
+              sub="Regional & National"
             />
             <CategoryPill
               icon={<Goal className="h-4 w-4 text-[#FBBF24]" />}
               label="Football"
-              sub="Premier League &amp; more"
+              sub="Premier League & more"
             />
             <CategoryPill
               icon={<Globe className="h-4 w-4 text-[#FBBF24]" />}
@@ -92,10 +88,7 @@ function CategoryPill({
       </div>
       <div className="text-sm">
         <span className="font-semibold text-white">{label}</span>
-        <p
-          className="text-xs text-[#AAB5D0]"
-          dangerouslySetInnerHTML={{ __html: sub }}
-        />
+        <p className="text-xs text-[#AAB5D0]">{sub}</p>
       </div>
     </div>
   );

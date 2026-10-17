@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   User,
@@ -25,9 +25,17 @@ import {
   Users,
   CheckCircle,
   XCircle,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
+import { useMeSummary } from "@/hooks/use-me";
+import { patchMe } from "@/lib/services/me";
+import { fetchMe } from "@/lib/auth";
+import { parseApiError } from "@/lib/errors";
+import { toast } from "@/stores/toast-store";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -121,10 +129,50 @@ function Crown({ className }: { className?: string }) {
 /* ------------------------------------------------------------------ */
 
 export default function ProfilePage() {
+  const user = useAuthStore((s) => s.user);
+  const setUser = useAuthStore((s) => s.setUser);
+  const { data: summary } = useMeSummary();
   const [activeSettingHover, setActiveSettingHover] = useState<string | null>(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [privacyPublic, setPrivacyPublic] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editUsername, setEditUsername] = useState("");
+
+  const displayName = user?.full_name ?? "User";
+  const username = user?.username ?? "";
+  const level = summary?.level ?? 1;
+  const xp = summary?.xp ?? 0;
+  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+
+  useEffect(() => {
+    if (isEditing) {
+      setEditName(displayName);
+      setEditUsername(username);
+    }
+  }, [isEditing, displayName, username]);
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const payload: Record<string, string> = {};
+      if (editName !== displayName) payload.full_name = editName;
+      if (editUsername !== username) payload.username = editUsername;
+
+      if (Object.keys(payload).length > 0) {
+        await patchMe(payload);
+        const updated = await fetchMe();
+        setUser(updated);
+        toast("success", "Profile updated");
+      }
+      setIsEditing(false);
+    } catch (err) {
+      toast("error", parseApiError(err, "Failed to update profile."));
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="space-y-5">
@@ -157,10 +205,10 @@ export default function ProfilePage() {
           {/* Avatar */}
           <div className="relative">
             <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-[#603BFF] text-3xl font-bold text-white ring-4 ring-[#603BFF]/30">
-              KS
+              {initials}
             </div>
             <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-[#FBBF24] text-xs font-bold text-[#070D25] ring-2 ring-[#0F1A36]">
-              3
+              {level}
             </div>
           </div>
 
@@ -168,34 +216,68 @@ export default function ProfilePage() {
           <div className="flex-1 text-center sm:text-left">
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-white">Kwame Star</h2>
-                <p className="text-sm text-[#AAB5D0]">@kwamestar</p>
+                {isEditing ? (
+                  <div className="space-y-2">
+                    <Input
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      placeholder="Full name"
+                      className="h-9 border-[#23315A] bg-[#0C1532] text-white"
+                    />
+                    <Input
+                      value={editUsername}
+                      onChange={(e) => setEditUsername(e.target.value)}
+                      placeholder="Username"
+                      className="h-9 border-[#23315A] bg-[#0C1532] text-white"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-xl font-bold text-white">{displayName}</h2>
+                    <p className="text-sm text-[#AAB5D0]">{username ? `@${username}` : "No username set"}</p>
+                  </>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FBBF24]/15 px-3 py-1 text-xs font-semibold text-[#FBBF24]">
                   <Star className="h-3 w-3" />
-                  Level 3
+                  Level {level}
                 </span>
-                <Button
-                  size="sm"
-                  onClick={() => setIsEditing(!isEditing)}
-                  className={cn(isEditing && "bg-[#5030E0]")}
-                >
-                  <Edit3 className="mr-1.5 h-3.5 w-3.5" />
-                  {isEditing ? "Save Profile" : "Edit Profile"}
-                </Button>
+                {isEditing ? (
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setIsEditing(false)}
+                      disabled={saving}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={handleSave}
+                      disabled={saving}
+                    >
+                      {saving ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+                      {saving ? "Saving..." : "Save"}
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Edit3 className="mr-1.5 h-3.5 w-3.5" />
+                    Edit Profile
+                  </Button>
+                )}
               </div>
             </div>
 
             <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-[#AAB5D0] sm:justify-start">
               <Calendar className="h-3.5 w-3.5" />
-              Joined September 2026
+              {user?.email ?? user?.phone_number ?? ""}
             </div>
-
-            <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#AAB5D0]">
-              Passionate sports predictor and NSMQ enthusiast. Building my streak one pick at a time.
-              Always backing the underdogs.
-            </p>
           </div>
         </div>
       </div>
@@ -230,7 +312,7 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className="text-xs text-[#AAB5D0]">Total XP</p>
-            <p className="text-lg font-bold text-white">2,480</p>
+            <p className="text-lg font-bold text-white">{xp.toLocaleString()}</p>
           </div>
         </div>
 

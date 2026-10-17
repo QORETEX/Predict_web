@@ -1,7 +1,8 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/providers/query-provider";
+import { AuthProvider } from "@/providers/auth-provider";
+import { ToastContainer } from "@/components/toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -50,14 +51,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-background font-sans antialiased">
-        <ClerkProvider
-          signInUrl="/login"
-          signUpUrl="/signup"
-          signInFallbackRedirectUrl="/dashboard"
-          signUpFallbackRedirectUrl="/welcome"
-        >
-          <QueryProvider>{children}</QueryProvider>
-        </ClerkProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <ToastContainer />
+        </QueryProvider>
       </body>
     </html>
   );
