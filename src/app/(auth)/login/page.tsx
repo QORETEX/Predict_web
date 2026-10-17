@@ -52,7 +52,7 @@ export default function LoginPage() {
             type="text"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Enter your email or phone number"
+            placeholder="Email or phone (+233...)"
             required
             className="h-11 border-[#23315A] bg-[#0C1532] text-white placeholder:text-[#AAB5D0]/40"
           />
