@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { login, setTokens } from "@/lib/auth";
+import { IdentifierInput } from "@/components/auth/phone-input";
+import { login, setTokens, requestOtp } from "@/lib/auth";
+import { ApiError } from "@/lib/api";
 import { parseApiError } from "@/lib/errors";
 import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "@/stores/toast-store";
@@ -30,6 +32,28 @@ export default function LoginPage() {
       toast("success", "Welcome back!");
       router.push("/dashboard");
     } catch (err) {
+      if (
+        err instanceof ApiError &&
+        typeof err.data === "object" &&
+        err.data !== null &&
+        ((err.data as Record<string, unknown>).error as Record<string, unknown>)?.code === "identifier_not_verified"
+      ) {
+        try {
+          const challenge = await requestOtp({ identifier, purpose: "signup" });
+          toast("success", `Please verify your account. Code sent to ${challenge.destination_masked}`);
+          const params = new URLSearchParams({
+            purpose: "signup",
+            identifier,
+            destination: challenge.destination_masked,
+            seconds: String(challenge.seconds_until_resend),
+          });
+          router.push(`/verify?${params.toString()}`);
+          return;
+        } catch {
+          toast("error", "Account not verified. Please try signing up again.");
+          return;
+        }
+      }
       toast("error", parseApiError(err, "Invalid email/phone or password."));
     } finally {
       setLoading(false);
@@ -48,13 +72,11 @@ export default function LoginPage() {
           <label className="mb-1.5 block text-sm font-medium text-[#AAB5D0]">
             Email or Phone number
           </label>
-          <Input
-            type="text"
+          <IdentifierInput
             value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Email or phone (+233...)"
+            onChange={setIdentifier}
+            placeholder="Email or phone number"
             required
-            className="h-11 border-[#23315A] bg-[#0C1532] text-white placeholder:text-[#AAB5D0]/40"
           />
         </div>
 

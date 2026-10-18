@@ -61,7 +61,7 @@ export default function WalletPage() {
   const totalWon = wallet?.total_won ?? 0;
   const totalStaked = wallet?.total_staked ?? 0;
   const canRefill = wallet?.can_refill ?? false;
-  const transactions = txns ?? [];
+  const transactions = Array.isArray(txns) ? txns : [];
 
   return (
     <div className="space-y-5">

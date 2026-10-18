@@ -1,44 +1,85 @@
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL!;
+type MessageHandler = (data: MarketUpdate) => void;
 
-type MessageHandler = (data: Record<string, unknown>) => void;
-
-let socket: WebSocket | null = null;
-let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-const listeners = new Map<string, Set<MessageHandler>>();
-
-function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("access_token");
+export interface MarketOutcome {
+  id: number;
+  label?: string;
+  code: string;
+  participant_id?: string | null;
+  staked_total?: number;
+  multiplier_display: number;
+  change_pct: number;
+  is_indicative?: boolean;
+  result?: string;
+  display_order?: number;
 }
 
-export function connect(channel: string) {
-  if (socket?.readyState === WebSocket.OPEN) return;
-
-  const token = getToken();
-  const url = `${WS_URL}/${channel}/${token ? `?token=${token}` : ""}`;
-
-  socket = new WebSocket(url);
-
-  socket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    const type = message.type as string;
-    const handlers = listeners.get(type);
-    handlers?.forEach((handler) => handler(message));
-  };
-
-  socket.onclose = () => {
-    reconnectTimer = setTimeout(() => connect(channel), 3000);
-  };
+export interface MarketUpdate {
+  market_id: string;
+  event_id: string;
+  market_label: string;
+  market_status: "open" | "locked" | "settled";
+  pool_total: number;
+  outcomes: MarketOutcome[];
 }
 
-export function disconnect() {
-  if (reconnectTimer) clearTimeout(reconnectTimer);
-  socket?.close();
-  socket = null;
+function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_WS_URL) {
+    return process.env.NEXT_PUBLIC_WS_URL;
+  }
+  const scheme = window.location.protocol === "https:" ? "wss:" : "ws:";
+  return `${scheme}//${window.location.host}`;
 }
 
-export function subscribe(type: string, handler: MessageHandler) {
-  if (!listeners.has(type)) listeners.set(type, new Set());
-  listeners.get(type)!.add(handler);
-  return () => listeners.get(type)?.delete(handler);
+const MAX_RECONNECT_DELAY = 30_000;
+
+export class WSChannel {
+  private ws: WebSocket | null = null;
+  private listeners = new Set<MessageHandler>();
+  private reconnectDelay = 1_000;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private closed = false;
+  private path: string;
+
+  constructor(path: string) {
+    this.path = path;
+  }
+
+  connect() {
+    if (this.ws?.readyState === WebSocket.OPEN || this.ws?.readyState === WebSocket.CONNECTING) return;
+    this.closed = false;
+
+    const url = `${getBaseUrl()}${this.path}`;
+    this.ws = new WebSocket(url);
+
+    this.ws.onmessage = (ev) => {
+      try {
+        const data: MarketUpdate = JSON.parse(ev.data);
+        this.listeners.forEach((fn) => fn(data));
+      } catch {
+        // ignore malformed messages
+      }
+    };
+
+    this.ws.onopen = () => {
+      this.reconnectDelay = 1_000;
+    };
+
+    this.ws.onclose = () => {
+      if (this.closed) return;
+      this.reconnectTimer = setTimeout(() => this.connect(), this.reconnectDelay);
+      this.reconnectDelay = Math.min(this.reconnectDelay * 2, MAX_RECONNECT_DELAY);
+    };
+  }
+
+  disconnect() {
+    this.closed = true;
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    this.ws?.close();
+    this.ws = null;
+  }
+
+  subscribe(handler: MessageHandler): () => void {
+    this.listeners.add(handler);
+    return () => this.listeners.delete(handler);
+  }
 }

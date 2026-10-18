@@ -1,89 +1,127 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, TrendingUp } from "lucide-react";
+import { useCallback, useState } from "react";
+import { ArrowRight, TrendingUp, TrendingDown, Radio, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLiveFeed } from "@/hooks/use-websocket";
+import { useTopMovers } from "@/hooks/use-events";
+import type { MarketUpdate } from "@/lib/ws";
 
-const SPORT_TABS = ["NSMQ", "Football", "Basketball", "Tennis"] as const;
-
-interface OddsItem {
-  rank: number;
-  team: string;
-  odds: number;
-  change: number;
+interface LiveItem {
+  key: string;
+  label: string;
+  topOutcome: string;
+  multiplier: number;
+  changePct: number;
 }
 
-const MOCK_ODDS: OddsItem[] = [
-  { rank: 1, team: "Kumasi Academy", odds: 1.78, change: 12 },
-  { rank: 2, team: "Prempeh College", odds: 2.12, change: 8 },
-  { rank: 3, team: "Accra Academy", odds: 1.95, change: 6 },
-  { rank: 4, team: "St. Roses SHS", odds: 1.88, change: 9 },
-  { rank: 5, team: "Wesley Girls", odds: 1.72, change: 11 },
-];
-
 export function LiveOdds() {
-  const [activeTab, setActiveTab] = useState<string>("NSMQ");
+  const { data: topMovers, isLoading } = useTopMovers();
+
+  const [wsOverrides, setWsOverrides] = useState<Map<string, LiveItem>>(new Map());
+
+  const handleUpdate = useCallback((data: MarketUpdate) => {
+    if (data.market_status !== "open") return;
+    const top = [...data.outcomes].sort(
+      (a, b) => b.multiplier_display - a.multiplier_display,
+    )[0];
+    if (!top) return;
+
+    setWsOverrides((prev) => {
+      const next = new Map(prev);
+      next.set(data.market_id, {
+        key: data.market_id,
+        label: data.market_label,
+        topOutcome: top.label ?? top.code,
+        multiplier: top.multiplier_display,
+        changePct: top.change_pct,
+      });
+      return next;
+    });
+  }, []);
+
+  useLiveFeed(handleUpdate);
+
+  const apiItems: LiveItem[] = (topMovers ?? []).slice(0, 6).map((m) => ({
+    key: `mover-${m.outcome_id}`,
+    label: m.event_name,
+    topOutcome: `${m.market_label} - ${m.outcome_label}`,
+    multiplier: m.multiplier_display,
+    changePct: m.change_pct,
+  }));
+
+  const wsItems = Array.from(wsOverrides.values()).slice(0, 6);
+  const items = wsItems.length > 0 ? wsItems : apiItems;
 
   return (
     <div className="rounded-lg bg-[#0F1A36] p-4">
-      {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">
-          Live Odds &amp; Multipliers
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-white">
+            Live Multipliers
+          </h3>
+          <span className="flex items-center gap-1 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[9px] font-bold uppercase text-red-500">
+            <Radio className="h-2.5 w-2.5" />
+            Live
+          </span>
+        </div>
         <button className="flex items-center gap-1 text-xs text-[#AAB5D0] transition-colors hover:text-white">
           View all
           <ArrowRight className="h-3 w-3" />
         </button>
       </div>
 
-      {/* Sport filter tabs */}
-      <div className="mt-3 flex gap-1.5">
-        {SPORT_TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              "rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors",
-              activeTab === tab
-                ? "bg-[#603BFF] text-white"
-                : "bg-[#0C1532] text-[#AAB5D0] hover:bg-[#162040] hover:text-white"
-            )}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {/* Odds list */}
       <div className="mt-3 space-y-2">
-        {MOCK_ODDS.map((item) => (
-          <div
-            key={item.rank}
-            className="flex items-center gap-3 rounded-md bg-[#0C1532] px-3 py-2"
-          >
-            {/* Rank */}
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1A2744] text-[11px] font-bold text-white">
-              {item.rank}
-            </span>
-
-            {/* Team name */}
-            <span className="min-w-0 flex-1 truncate text-xs font-medium text-white">
-              {item.team}
-            </span>
-
-            {/* Odds */}
-            <span className="text-sm font-semibold text-white">
-              {item.odds.toFixed(2)}
-            </span>
-
-            {/* Change */}
-            <span className="flex items-center gap-0.5 text-[11px] font-medium text-[#22C55E]">
-              <TrendingUp className="h-3 w-3" />
-              {item.change}%
-            </span>
+        {isLoading && items.length === 0 ? (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-4 w-4 animate-spin text-[#AAB5D0]" />
           </div>
-        ))}
+        ) : items.length === 0 ? (
+          <div className="py-6 text-center text-xs text-[#AAB5D0]/60">
+            No live markets right now
+          </div>
+        ) : (
+          items.map((item) => {
+            const isUp = item.changePct > 0;
+            const isDown = item.changePct < 0;
+            return (
+              <div
+                key={item.key}
+                className="flex items-center gap-3 rounded-md bg-[#0C1532] px-3 py-2"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-medium text-white">
+                    {item.label}
+                  </p>
+                  <p className="truncate text-[10px] text-[#AAB5D0]">
+                    {item.topOutcome}
+                  </p>
+                </div>
+
+                <span className="text-sm font-semibold text-white">
+                  {item.multiplier.toFixed(2)}x
+                </span>
+
+                <span
+                  className={cn(
+                    "flex items-center gap-0.5 text-[11px] font-medium",
+                    isUp && "text-[#22C55E]",
+                    isDown && "text-red-400",
+                    !isUp && !isDown && "text-[#AAB5D0]",
+                  )}
+                >
+                  {isUp ? (
+                    <TrendingUp className="h-3 w-3" />
+                  ) : isDown ? (
+                    <TrendingDown className="h-3 w-3" />
+                  ) : null}
+                  {item.changePct > 0 ? "+" : ""}
+                  {item.changePct.toFixed(1)}%
+                </span>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

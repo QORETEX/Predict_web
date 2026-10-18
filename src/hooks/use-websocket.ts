@@ -1,22 +1,38 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { connect, disconnect, subscribe } from "@/lib/ws";
+import { useEffect, useRef, useCallback } from "react";
+import { WSChannel, type MarketUpdate } from "@/lib/ws";
 
-export function useWebSocket(
-  channel: string,
-  messageType: string,
-  handler: (data: Record<string, unknown>) => void,
+export function useLiveFeed(handler: (data: MarketUpdate) => void) {
+  const handlerRef = useRef(handler);
+  handlerRef.current = handler;
+
+  useEffect(() => {
+    const channel = new WSChannel("/ws/live/");
+    channel.connect();
+    const unsub = channel.subscribe((data) => handlerRef.current(data));
+    return () => {
+      unsub();
+      channel.disconnect();
+    };
+  }, []);
+}
+
+export function useEventMarkets(
+  eventId: string | null | undefined,
+  handler: (data: MarketUpdate) => void,
 ) {
   const handlerRef = useRef(handler);
   handlerRef.current = handler;
 
   useEffect(() => {
-    connect(channel);
-    const unsubscribe = subscribe(messageType, (data) => handlerRef.current(data));
+    if (!eventId) return;
+    const channel = new WSChannel(`/ws/events/${eventId}/`);
+    channel.connect();
+    const unsub = channel.subscribe((data) => handlerRef.current(data));
     return () => {
-      unsubscribe();
-      disconnect();
+      unsub();
+      channel.disconnect();
     };
-  }, [channel, messageType]);
+  }, [eventId]);
 }

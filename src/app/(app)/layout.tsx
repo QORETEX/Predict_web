@@ -1,13 +1,12 @@
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, Zap, Gamepad2, UsersRound } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
-import Image from "next/image";
-import { Zap, ShieldCheck, Gamepad2, UsersRound } from "lucide-react";
 import { PickSlip } from "@/components/dashboard/pick-slip";
 import { WalletCard } from "@/components/dashboard/wallet-card";
 import { LiveOdds } from "@/components/dashboard/live-odds";
@@ -116,69 +115,72 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Full-width footer — fixed at bottom, spans across both sidebars */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 hidden border-t border-[#23315A] bg-[#070D25] lg:block">
-        <div className="flex items-center justify-between px-8 py-4">
+      <footer className={cn(
+        "fixed bottom-0 right-0 z-50 hidden border-t border-[#23315A] bg-[#070D25] transition-[left] duration-300 lg:block",
+        leftOpen ? "left-[240px]" : "left-[68px]"
+      )}>
+        <div className="flex items-center justify-between px-6 py-2">
           {/* Logo */}
-          <div className="flex shrink-0 items-center gap-2.5">
+          <div className="flex shrink-0 items-center gap-2">
             <Image
               src="/icons/logo-icon.jpeg"
               alt="Predict"
-              width={28}
-              height={28}
-              className="rounded-lg"
+              width={22}
+              height={22}
+              className="rounded-md"
             />
             <div>
-              <span className="text-sm font-bold text-white">Predict</span>
-              <p className="text-[11px] text-[#AAB5D0]">Pick. Play. Climb.</p>
+              <span className="text-xs font-bold text-white">Predict</span>
+              <p className="text-[9px] leading-tight text-[#AAB5D0]">Pick. Play. Climb.</p>
             </div>
           </div>
 
           {/* Highlight items */}
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <Zap className="h-4 w-4 text-[#FBBF24]" />
+          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-1.5">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
+                <Zap className="h-3 w-3 text-[#FBBF24]" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-white">Free to play</p>
-                <p className="text-[11px] text-[#AAB5D0]">Tokens have no cash value</p>
+                <p className="text-[10px] font-semibold leading-tight text-white">Free to play</p>
+                <p className="text-[9px] leading-tight text-[#AAB5D0]">No cash value</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <span className="text-sm font-extrabold text-[#FBBF24]">15+</span>
+            <div className="flex items-center gap-1.5">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
+                <span className="text-[9px] font-extrabold text-[#FBBF24]">15+</span>
               </div>
               <div>
-                <p className="text-xs font-semibold text-white">Age 15+</p>
-                <p className="text-[11px] text-[#AAB5D0]">Ghana Card verification</p>
+                <p className="text-[10px] font-semibold leading-tight text-white">Age 15+</p>
+                <p className="text-[9px] leading-tight text-[#AAB5D0]">Ghana Card KYC</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <Gamepad2 className="h-4 w-4 text-[#FBBF24]" />
+            <div className="flex items-center gap-1.5">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
+                <Gamepad2 className="h-3 w-3 text-[#FBBF24]" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-white">NSMQ + Football + More</p>
-                <p className="text-[11px] text-[#AAB5D0]">Complete, earn XP, climb</p>
+                <p className="text-[10px] font-semibold leading-tight text-white">NSMQ + More</p>
+                <p className="text-[9px] leading-tight text-[#AAB5D0]">Earn XP, climb</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
-                <UsersRound className="h-4 w-4 text-[#FBBF24]" />
+            <div className="flex items-center gap-1.5">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#101A3A]">
+                <UsersRound className="h-3 w-3 text-[#FBBF24]" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-white">Community Driven</p>
-                <p className="text-[11px] text-[#AAB5D0]">Friends, squads, schools</p>
+                <p className="text-[10px] font-semibold leading-tight text-white">Community</p>
+                <p className="text-[9px] leading-tight text-[#AAB5D0]">Squads & schools</p>
               </div>
             </div>
           </div>
 
           {/* Tagline */}
           <p
-            className="shrink-0 bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] bg-clip-text text-base italic text-transparent"
+            className="shrink-0 bg-gradient-to-r from-[#FBBF24] to-[#F59E0B] bg-clip-text text-xs italic text-transparent"
             style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
           >
             Your picks.<br />Your journey.

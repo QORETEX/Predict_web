@@ -34,7 +34,7 @@ export function WelcomeBanner() {
   const user = useAuthStore((s) => s.user);
   const { data: summary } = useMeSummary();
 
-  const firstName = user?.full_name?.split(" ")[0] ?? "there";
+  const firstName = user?.username || user?.full_name?.split(" ")[0] || "there";
   const balance = summary?.balance ?? 0;
   const level = summary?.level ?? 1;
   const xp = summary?.xp ?? 0;

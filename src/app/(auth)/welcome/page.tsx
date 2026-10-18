@@ -1,62 +1,86 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Trophy, Star, Users, Zap } from "lucide-react";
+import { ArrowRight, Coins, Flame, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
+import { useMeSummary } from "@/hooks/use-me";
 
 export default function WelcomePage() {
   const user = useAuthStore((s) => s.user);
-  const displayName = user?.full_name?.split(" ")[0] ?? "there";
+  const { data: summary } = useMeSummary();
+  const displayName = user?.username || user?.full_name?.split(" ")[0] || "there";
+  const balance = summary?.balance ?? 0;
+  const level = summary?.level ?? 1;
 
   return (
-    <div className="text-center">
-      <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#FBBF24]/15">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FBBF24]/25">
-          <Trophy className="h-7 w-7 text-[#FBBF24]" />
+    <div>
+      {/* Greeting */}
+      <div className="text-center">
+        <p className="text-sm font-medium tracking-wide text-[#603BFF]">
+          WELCOME TO PREDICT
+        </p>
+        <h1 className="mt-2 text-2xl font-bold text-white">
+          Hey {displayName}!
+        </h1>
+        <p className="mt-1.5 text-sm text-[#AAB5D0]">
+          Your account is ready. Here&apos;s what you start with.
+        </p>
+      </div>
+
+      {/* Stats row */}
+      <div className="mt-7 flex gap-3">
+        <div className="flex-1 rounded-xl bg-[#0C1532] p-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-400/10">
+            <Coins className="h-4 w-4 text-yellow-400" />
+          </div>
+          <p className="mt-3 text-xl font-bold text-white">{balance}</p>
+          <p className="text-xs text-[#AAB5D0]">Tokens</p>
+        </div>
+        <div className="flex-1 rounded-xl bg-[#0C1532] p-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-400/10">
+            <Flame className="h-4 w-4 text-orange-400" />
+          </div>
+          <p className="mt-3 text-xl font-bold text-white">{level}</p>
+          <p className="text-xs text-[#AAB5D0]">Level</p>
+        </div>
+        <div className="flex-1 rounded-xl bg-[#0C1532] p-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#603BFF]/10">
+            <Target className="h-4 w-4 text-[#603BFF]" />
+          </div>
+          <p className="mt-3 text-xl font-bold text-white">0</p>
+          <p className="text-xs text-[#AAB5D0]">Picks</p>
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold text-white">Hey {displayName}, you&apos;re all set!</h1>
-      <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-[#AAB5D0]">
-        Welcome to Predict. Your account is ready — start making picks and
-        climbing the leaderboard.
-      </p>
-
-      <div className="mx-auto mt-6 inline-flex items-center gap-2 rounded-full border border-[#FBBF24]/20 bg-[#FBBF24]/10 px-4 py-2">
-        <Zap className="h-4 w-4 text-[#FBBF24]" />
-        <span className="text-sm font-semibold text-[#FBBF24]">+50 TKN</span>
-        <span className="text-sm text-[#AAB5D0]">welcome bonus</span>
-      </div>
-
-      <div className="mt-6 grid grid-cols-3 gap-3">
-        <div className="rounded-lg border border-[#23315A] bg-[#0C1532] px-3 py-4">
-          <Trophy className="mx-auto mb-2 h-5 w-5 text-[#FBBF24]" />
-          <p className="text-lg font-bold text-white">0</p>
-          <p className="text-[11px] text-[#AAB5D0]">Predictions</p>
-        </div>
-        <div className="rounded-lg border border-[#23315A] bg-[#0C1532] px-3 py-4">
-          <Star className="mx-auto mb-2 h-5 w-5 text-[#FBBF24]" />
-          <p className="text-lg font-bold text-white">50</p>
-          <p className="text-[11px] text-[#AAB5D0]">Tokens</p>
-        </div>
-        <div className="rounded-lg border border-[#23315A] bg-[#0C1532] px-3 py-4">
-          <Users className="mx-auto mb-2 h-5 w-5 text-[#34D399]" />
-          <p className="text-lg font-bold text-white">0</p>
-          <p className="text-[11px] text-[#AAB5D0]">Squads</p>
+      {/* What to do next */}
+      <div className="mt-7">
+        <p className="mb-3 text-xs font-medium tracking-wide text-[#AAB5D0]/60">
+          WHAT YOU CAN DO
+        </p>
+        <div className="space-y-2.5">
+          {[
+            { text: "Predict outcomes on live & upcoming events", color: "text-yellow-400" },
+            { text: "Compete on school & national leaderboards", color: "text-[#603BFF]" },
+            { text: "Earn XP, level up, unlock rewards", color: "text-orange-400" },
+          ].map((item) => (
+            <div
+              key={item.text}
+              className="flex items-center gap-3 rounded-lg bg-[#0C1532] px-3.5 py-3"
+            >
+              <span className={`text-base ${item.color}`}>&#8226;</span>
+              <span className="text-sm text-[#AAB5D0]">{item.text}</span>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="mt-6 space-y-3">
-        <Button className="h-11 w-full" asChild>
+      {/* CTA */}
+      <div className="mt-7 space-y-3">
+        <Button className="h-12 w-full text-[15px]" asChild>
           <Link href="/dashboard">
-            Start Predicting
-            <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
-        </Button>
-        <Button variant="outline" className="h-11 w-full border-[#23315A]" asChild>
-          <Link href="/live">
-            Explore Events
+            Go to Dashboard
+            <ArrowRight className="ml-1.5 h-4 w-4" />
           </Link>
         </Button>
       </div>

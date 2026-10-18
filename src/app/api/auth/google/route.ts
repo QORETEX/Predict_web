@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
-const APP_URL = process.env.APP_URL!;
 
-export async function GET() {
-  const redirectUri = `${APP_URL}/api/auth/google/callback`;
+export async function GET(req: NextRequest) {
+  const origin = req.nextUrl.origin;
+  const redirectUri = `${origin}/api/auth/google/callback`;
 
   const params = new URLSearchParams({
     client_id: GOOGLE_CLIENT_ID,

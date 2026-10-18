@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Mail, Eye, EyeOff, Loader2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { IdentifierInput } from "@/components/auth/phone-input";
 import { passwordResetRequest, passwordResetConfirm } from "@/lib/auth";
 import { parseApiError } from "@/lib/errors";
 import { toast } from "@/stores/toast-store";
@@ -58,13 +59,11 @@ function RequestStep() {
           <label className="mb-1.5 block text-sm font-medium text-[#AAB5D0]">
             Email or phone number
           </label>
-          <Input
-            type="text"
+          <IdentifierInput
             value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Enter your email or phone number"
+            onChange={setIdentifier}
+            placeholder="Email or phone number"
             required
-            className="h-11 border-[#23315A] bg-[#0C1532] text-white placeholder:text-[#AAB5D0]/40"
           />
         </div>
 

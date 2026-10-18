@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { register } from "@/lib/auth";
+import { IdentifierInput } from "@/components/auth/phone-input";
+import { register, requestOtp } from "@/lib/auth";
+import { ApiError } from "@/lib/api";
 import { parseApiError } from "@/lib/errors";
 import { toast } from "@/stores/toast-store";
 import { SocialAuthButtons } from "@/components/auth/social-auth-buttons";
@@ -39,6 +41,30 @@ export default function SignUpPage() {
       });
       router.push(`/verify?${params.toString()}`);
     } catch (err) {
+      if (
+        err instanceof ApiError &&
+        typeof err.data === "object" &&
+        err.data !== null &&
+        (err.data as Record<string, unknown>).error &&
+        typeof (err.data as Record<string, unknown>).error === "object" &&
+        ((err.data as Record<string, unknown>).error as Record<string, unknown>).code === "identifier_taken"
+      ) {
+        try {
+          const challenge = await requestOtp({ identifier, purpose: "signup" });
+          toast("success", `Verification code sent to ${challenge.destination_masked}`);
+          const params = new URLSearchParams({
+            purpose: "signup",
+            identifier,
+            destination: challenge.destination_masked,
+            seconds: String(challenge.seconds_until_resend),
+          });
+          router.push(`/verify?${params.toString()}`);
+          return;
+        } catch {
+          toast("error", "This account already exists. Please log in instead.");
+          return;
+        }
+      }
       toast("error", parseApiError(err, "Registration failed. Please try again."));
     } finally {
       setLoading(false);
@@ -71,13 +97,11 @@ export default function SignUpPage() {
           <label className="mb-1.5 block text-sm font-medium text-[#AAB5D0]">
             Email or phone number
           </label>
-          <Input
-            type="text"
+          <IdentifierInput
             value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Enter your email or phone number"
+            onChange={setIdentifier}
+            placeholder="Email or phone number"
             required
-            className="h-11 border-[#23315A] bg-[#0C1532] text-white placeholder:text-[#AAB5D0]/40"
           />
         </div>
 
