@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const APPLE_CLIENT_ID = process.env.APPLE_CLIENT_ID!;
+const APP_URL = process.env.APP_URL!;
 
 export async function GET(req: NextRequest) {
-  const origin = req.nextUrl.origin;
+  const origin = process.env.NODE_ENV === "production" ? APP_URL : req.nextUrl.origin;
   const redirectUri = `${origin}/api/auth/apple/callback`;
 
   const params = new URLSearchParams({

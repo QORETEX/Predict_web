@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const API_URL = process.env.API_URL!;
+const APP_URL = process.env.APP_URL!;
 const TOKEN_COOKIE = "predict_access";
 
 export async function POST(req: NextRequest) {
-  const origin = req.nextUrl.origin;
+  const origin = process.env.NODE_ENV === "production" ? APP_URL : req.nextUrl.origin;
   try {
     const formData = await req.formData();
     const idToken = formData.get("id_token") as string | null;
@@ -46,11 +47,14 @@ export async function POST(req: NextRequest) {
     const redirectPath = is_new_user ? "/welcome" : "/dashboard";
     const response = NextResponse.redirect(new URL(redirectPath, origin));
 
+    const isSecure = origin.startsWith("https");
+
     response.cookies.set(TOKEN_COOKIE, access, {
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
       sameSite: "lax",
       httpOnly: false,
+      secure: isSecure,
     });
 
     response.cookies.set("predict_refresh", refresh, {
@@ -58,6 +62,7 @@ export async function POST(req: NextRequest) {
       maxAge: 60 * 60 * 24 * 30,
       sameSite: "lax",
       httpOnly: true,
+      secure: isSecure,
     });
 
     response.cookies.set("predict_auth_data", JSON.stringify(authData), {
@@ -65,6 +70,7 @@ export async function POST(req: NextRequest) {
       maxAge: 60,
       sameSite: "lax",
       httpOnly: false,
+      secure: isSecure,
     });
 
     return response;

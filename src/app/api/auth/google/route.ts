@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
+const APP_URL = process.env.APP_URL!;
 
 export async function GET(req: NextRequest) {
-  const origin = req.nextUrl.origin;
+  const origin = process.env.NODE_ENV === "production" ? APP_URL : req.nextUrl.origin;
   const redirectUri = `${origin}/api/auth/google/callback`;
 
   const params = new URLSearchParams({
