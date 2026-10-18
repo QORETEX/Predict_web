@@ -21,7 +21,11 @@ import {
   X,
   ChevronsLeft,
   ChevronsRight,
+  LogOut,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
+import { useAuthStore } from "@/stores/auth-store";
 import { cn } from "@/lib/utils";
 
 const mainNavItems = [
@@ -98,10 +102,18 @@ export function Sidebar({
   onMobileClose: () => void;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const clearUser = useAuthStore((s) => s.clear);
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
+  }
+
+  async function handleLogout() {
+    await logout();
+    clearUser();
+    router.push("/login");
   }
 
   return (
@@ -154,6 +166,16 @@ export function Sidebar({
           ))}
         </nav>
 
+        <div className="border-t border-border px-3 py-3">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            <span>Log out</span>
+          </button>
+        </div>
       </aside>
 
       {/* Desktop sidebar — expanded or icon rail */}
@@ -206,18 +228,30 @@ export function Sidebar({
           ))}
         </nav>
 
-        {/* Expand button when collapsed */}
-        {!open && (
-          <div className="border-t border-[#23315A] px-2 py-4">
+        <div className={cn("border-t border-[#23315A] py-3", open ? "px-3" : "px-2")}>
+          <button
+            type="button"
+            onClick={handleLogout}
+            title={!open ? "Log out" : undefined}
+            className={cn(
+              "flex w-full items-center rounded-lg text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10",
+              open ? "gap-3 px-3 py-2.5" : "justify-center py-2.5"
+            )}
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            {open && <span>Log out</span>}
+          </button>
+
+          {!open && (
             <button
               type="button"
               onClick={onToggle}
-              className="flex w-full items-center justify-center rounded-md py-2 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground"
+              className="mt-2 flex w-full items-center justify-center rounded-md py-2 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground"
             >
               <ChevronsRight className="h-4 w-4" />
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </aside>
     </>
   );

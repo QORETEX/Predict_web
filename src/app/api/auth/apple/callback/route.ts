@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const API_URL = process.env.API_URL!;
-const APP_URL = process.env.APP_URL!;
 const TOKEN_COOKIE = "predict_access";
 
 export async function POST(req: NextRequest) {
+  const origin = req.nextUrl.origin;
   try {
     const formData = await req.formData();
     const idToken = formData.get("id_token") as string | null;
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const error = formData.get("error") as string | null;
 
     if (error || !idToken) {
-      return NextResponse.redirect(new URL("/login?error=apple_cancelled", APP_URL));
+      return NextResponse.redirect(new URL("/login?error=apple_cancelled", origin));
     }
 
     let fullName: string | undefined;
@@ -37,14 +37,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (!backendRes.ok) {
-      return NextResponse.redirect(new URL("/login?error=backend_auth_failed", APP_URL));
+      return NextResponse.redirect(new URL("/login?error=backend_auth_failed", origin));
     }
 
     const authData = await backendRes.json();
     const { access, refresh, is_new_user } = authData;
 
     const redirectPath = is_new_user ? "/welcome" : "/dashboard";
-    const response = NextResponse.redirect(new URL(redirectPath, APP_URL));
+    const response = NextResponse.redirect(new URL(redirectPath, origin));
 
     response.cookies.set(TOKEN_COOKIE, access, {
       path: "/",
@@ -69,6 +69,6 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch {
-    return NextResponse.redirect(new URL("/login?error=oauth_failed", APP_URL));
+    return NextResponse.redirect(new URL("/login?error=oauth_failed", origin));
   }
 }

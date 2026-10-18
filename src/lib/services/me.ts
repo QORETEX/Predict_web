@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import type { OtpChallengeResponse } from "@/types";
 
 export interface MeSummary {
   balance: number;
@@ -41,8 +42,8 @@ export function patchProfile(data: ProfilePatchPayload) {
   return api("/api/v1/me/profile/", { method: "PATCH", body: data });
 }
 
-export function addPhone(phone: string) {
-  return api("/api/v1/me/phone/", { method: "POST", body: { phone } });
+export function addPhone(phone: string): Promise<OtpChallengeResponse> {
+  return api<OtpChallengeResponse>("/api/v1/me/phone/", { method: "POST", body: { phone } });
 }
 
 export function setDateOfBirth(date_of_birth: string) {

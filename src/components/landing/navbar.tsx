@@ -40,7 +40,7 @@ export function Navbar() {
               className="flex items-center gap-2 rounded-lg bg-[#603BFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5030CC]"
             >
               <User className="h-4 w-4" />
-              {user?.full_name?.split(" ")[0] ?? "Dashboard"}
+              {user?.username || user?.full_name?.split(" ")[0] || "Dashboard"}
             </Link>
           ) : (
             <>

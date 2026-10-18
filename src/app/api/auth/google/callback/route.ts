@@ -3,15 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 const API_URL = process.env.API_URL!;
-const APP_URL = process.env.APP_URL!;
 const TOKEN_COOKIE = "predict_access";
 
 export async function GET(req: NextRequest) {
+  const origin = req.nextUrl.origin;
   const code = req.nextUrl.searchParams.get("code");
   const error = req.nextUrl.searchParams.get("error");
 
   if (error || !code) {
-    return NextResponse.redirect(new URL("/login?error=oauth_cancelled", APP_URL));
+    return NextResponse.redirect(new URL("/login?error=oauth_cancelled", origin));
   }
 
   try {
@@ -22,20 +22,20 @@ export async function GET(req: NextRequest) {
         code,
         client_id: GOOGLE_CLIENT_ID,
         client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${APP_URL}/api/auth/google/callback`,
+        redirect_uri: `${origin}/api/auth/google/callback`,
         grant_type: "authorization_code",
       }),
     });
 
     if (!tokenRes.ok) {
-      return NextResponse.redirect(new URL("/login?error=google_token_exchange_failed", APP_URL));
+      return NextResponse.redirect(new URL("/login?error=google_token_exchange_failed", origin));
     }
 
     const tokenData = await tokenRes.json();
     const idToken: string = tokenData.id_token;
 
     if (!idToken) {
-      return NextResponse.redirect(new URL("/login?error=no_id_token", APP_URL));
+      return NextResponse.redirect(new URL("/login?error=no_id_token", origin));
     }
 
     const backendRes = await fetch(`${API_URL}/api/v1/auth/google/`, {
@@ -45,14 +45,14 @@ export async function GET(req: NextRequest) {
     });
 
     if (!backendRes.ok) {
-      return NextResponse.redirect(new URL("/login?error=backend_auth_failed", APP_URL));
+      return NextResponse.redirect(new URL("/login?error=backend_auth_failed", origin));
     }
 
     const authData = await backendRes.json();
     const { access, refresh, is_new_user } = authData;
 
     const redirectPath = is_new_user ? "/welcome" : "/dashboard";
-    const response = NextResponse.redirect(new URL(redirectPath, APP_URL));
+    const response = NextResponse.redirect(new URL(redirectPath, origin));
 
     response.cookies.set(TOKEN_COOKIE, access, {
       path: "/",
@@ -77,6 +77,6 @@ export async function GET(req: NextRequest) {
 
     return response;
   } catch {
-    return NextResponse.redirect(new URL("/login?error=oauth_failed", APP_URL));
+    return NextResponse.redirect(new URL("/login?error=oauth_failed", origin));
   }
 }

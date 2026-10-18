@@ -109,10 +109,6 @@ function VerifyContent() {
 
   return (
     <div>
-      <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#603BFF]/15">
-        <Mail className="h-7 w-7 text-[#603BFF]" />
-      </div>
-
       <h1 className="text-center text-2xl font-bold text-white">Verify your account</h1>
       <p className="mt-2 text-center text-sm text-[#AAB5D0]">
         We&apos;ve sent a 6-digit verification code to{" "}

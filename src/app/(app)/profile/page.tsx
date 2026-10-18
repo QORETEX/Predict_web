@@ -140,7 +140,7 @@ export default function ProfilePage() {
   const [editName, setEditName] = useState("");
   const [editUsername, setEditUsername] = useState("");
 
-  const displayName = user?.full_name ?? "User";
+  const displayName = user?.username || user?.full_name || "User";
   const username = user?.username ?? "";
   const level = summary?.level ?? 1;
   const xp = summary?.xp ?? 0;

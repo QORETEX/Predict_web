@@ -32,9 +32,12 @@ function getAuthHeaders(): Record<string, string> {
 export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, headers = {}, signal, skipAuth = false } = options;
 
+  const url = `${API_URL}${path}`;
+  console.log(`[API] ${method} ${url}`, body ? { body } : '');
+
   let res: Response;
   try {
-    res = await fetch(`${API_URL}${path}`, {
+    res = await fetch(url, {
       method,
       headers: {
         "Content-Type": "application/json",
