@@ -22,12 +22,23 @@ export interface MarketUpdate {
   outcomes: MarketOutcome[];
 }
 
-function getBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_WS_URL) {
-    return process.env.NEXT_PUBLIC_WS_URL;
+let cachedWsUrl: string | null = null;
+
+async function getBaseUrl(): Promise<string> {
+  if (cachedWsUrl) return cachedWsUrl;
+  try {
+    const res = await fetch("/api/config");
+    const data = await res.json();
+    if (data.wsUrl) {
+      cachedWsUrl = data.wsUrl as string;
+      return cachedWsUrl!;
+    }
+  } catch {
+    // fall through to default
   }
   const scheme = window.location.protocol === "https:" ? "wss:" : "ws:";
-  return `${scheme}//${window.location.host}`;
+  cachedWsUrl = `${scheme}//${window.location.host}`;
+  return cachedWsUrl;
 }
 
 const MAX_RECONNECT_DELAY = 30_000;
@@ -44,11 +55,12 @@ export class WSChannel {
     this.path = path;
   }
 
-  connect() {
+  async connect() {
     if (this.ws?.readyState === WebSocket.OPEN || this.ws?.readyState === WebSocket.CONNECTING) return;
     this.closed = false;
 
-    const url = `${getBaseUrl()}${this.path}`;
+    const base = await getBaseUrl();
+    const url = `${base}${this.path}`;
     this.ws = new WebSocket(url);
 
     this.ws.onmessage = (ev) => {
