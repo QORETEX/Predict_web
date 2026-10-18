@@ -3,10 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 const API_URL = process.env.API_URL!;
+const APP_URL = process.env.APP_URL!;
 const TOKEN_COOKIE = "predict_access";
 
 export async function GET(req: NextRequest) {
-  const origin = req.nextUrl.origin;
+  const origin = process.env.NODE_ENV === "production" ? APP_URL : req.nextUrl.origin;
   const code = req.nextUrl.searchParams.get("code");
   const error = req.nextUrl.searchParams.get("error");
 
@@ -51,14 +52,17 @@ export async function GET(req: NextRequest) {
     const authData = await backendRes.json();
     const { access, refresh, is_new_user } = authData;
 
-    const redirectPath = is_new_user ? "/welcome" : "/dashboard";
+    const redirectPath = is_new_user ? "/onboarding" : "/dashboard";
     const response = NextResponse.redirect(new URL(redirectPath, origin));
+
+    const isSecure = origin.startsWith("https");
 
     response.cookies.set(TOKEN_COOKIE, access, {
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
       sameSite: "lax",
       httpOnly: false,
+      secure: isSecure,
     });
 
     response.cookies.set("predict_refresh", refresh, {
@@ -66,6 +70,7 @@ export async function GET(req: NextRequest) {
       maxAge: 60 * 60 * 24 * 30,
       sameSite: "lax",
       httpOnly: true,
+      secure: isSecure,
     });
 
     response.cookies.set("predict_auth_data", JSON.stringify(authData), {
@@ -73,6 +78,7 @@ export async function GET(req: NextRequest) {
       maxAge: 60,
       sameSite: "lax",
       httpOnly: false,
+      secure: isSecure,
     });
 
     return response;

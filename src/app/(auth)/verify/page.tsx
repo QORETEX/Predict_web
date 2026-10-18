@@ -68,7 +68,7 @@ function VerifyContent() {
       setTokens(res);
       setUser(res.user);
       toast("success", "Account verified successfully!");
-      router.push(res.is_new_user ? "/welcome" : "/dashboard");
+      router.push(res.is_new_user ? "/onboarding" : "/dashboard");
     } catch (err) {
       toast("error", parseApiError(err, "Invalid verification code. Please try again."));
       setOtp(["", "", "", "", "", ""]);
