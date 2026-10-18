@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
     const authData = await backendRes.json();
     const { access, refresh, is_new_user } = authData;
 
-    const redirectPath = is_new_user ? "/welcome" : "/dashboard";
+    const redirectPath = is_new_user ? "/onboarding" : "/dashboard";
     const response = NextResponse.redirect(new URL(redirectPath, origin));
 
     const isSecure = origin.startsWith("https");
